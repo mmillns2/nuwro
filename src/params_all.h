@@ -111,7 +111,6 @@ PARAM(double,hyp_axial_mass,1030)\
 PARAM(bool,hyp_effmass,true)\
 PARAM(double,hyp_Lambda_Eb,27)\
 PARAM(double,hyp_Sigma_Eb,-70)\
-PARAM(bool,kaon_effmass,true)\     
 PARAM(bool,kaskada_on,1)\
 PARAM(double,kaskada_w,7)\
 PARAM(bool,kaskada_redo,0)\

@@ -19,7 +19,7 @@
 
 #include "kaon_diff_xsec.h"
 #include "23Scatter.h"
-#include "single_kaon_matrix_elements/matrix_elements.h"
+#include "matrix_elements.h"
 
 #define LOCALKF localkf_O
 
@@ -69,8 +69,8 @@ double kaonevent(params& p, event& e, nucleus& t)
   vect nu4 = nu;
 
   // not sure whats going on here
-  if(p.kaon_effmass) nu4.boost (-N0_Eb.v());  // go to target frame
-  else nu4.boost (-N0.v());  
+  //if(p.kaon_effmass) nu4.boost (-N0_Eb.v());  // go to target frame
+  nu4.boost (-N0.v());  
 
   double Enu0=nu4.t;    // neutrino energy in target frame   
 
@@ -111,16 +111,16 @@ double kaonevent(params& p, event& e, nucleus& t)
   double theta{ std::acos(e.costheta()) };
 
   // Switch to use effective masses of particles in cross section calculation
-  if(p.kaon_effmass){    // change to kaon effective mass
-     Nuc0_mass = sqrt(N0_Eb*N0_Eb);
-     Nuc1_mass = sqrt(N1*N1);
-     Kaon_mass = sqrt(kaon*kaon);
-  }
-  else {
-     Nuc0_mass = N0.mass();
-     Nuc1_mass = N1.mass();
-     Kaon_mass = kaon.mass();
-  }
+ // if(p.kaon_effmass){    // change to kaon effective mass
+ //    Nuc0_mass = sqrt(N0_Eb*N0_Eb);
+ //    Nuc1_mass = sqrt(N1*N1);
+ //    Kaon_mass = sqrt(kaon*kaon);
+ // }
+ // else {
+  Nuc0_mass = N0.mass();
+  Nuc1_mass = N1.mass();
+  Kaon_mass = kaon.mass();
+ // }
 
   // set form factors
   if(N0_Eb.pdg == 2212 && N1.pdg == 2212) {  // proton-proton
