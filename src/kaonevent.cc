@@ -36,6 +36,9 @@ double kaonevent(params& p, event& e, nucleus& t)
   e.flag.kaon = true;// need to add kaon flag to event1
   e.weight = 0;
 
+	// disable for anti neutrinos for now
+	if(e.in[0].pdg < 0) return 0;
+
   // particles
   particle nu = e.in[0];  // initial antineutrino
   particle N0 = e.in[1];  // initial nucleon

@@ -93,6 +93,7 @@ dyn_coh_nc =0      // Coherent neutral current
 dyn_mec_cc =1      // Meson exchange charged current
 dyn_mec_nc =0      // Meson exchange neutral current
 dyn_hyp_cc =1      // Quasi elastic hyperon production
+dyn_kaon =1        // Quasi elastic kaon production
 dyn_lep    =1      // Neutrino-electron
 # Standard output of total sigma [cm^2 / nucleon]
 
