@@ -17,6 +17,7 @@ class flags
 		bool coh;        ///< coherent              (coh == dyn/2==3)
 		bool mec;        ///< meson exhange current (mec == dyn/2==4)
 		bool hyp;        ///< hyperon production    
+		bool kaon;       ///< kaon production    
     bool lep;        ///< neutrino-lepton                
 
 		bool nc;         ///< neutral current       (nc == dyn%2)     
