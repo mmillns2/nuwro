@@ -35,6 +35,7 @@
 #include "rew/rewparams.h"
 #include "lepevent.h"
 #include "output.h"
+#include "kaonevent.h"
 
 
 extern double SPP[2][2][2][3][40];
@@ -431,6 +432,13 @@ void NuWro::makeevent(event* e, params &p)
 				hypevent (p, *e, *_nucleus);
 			}
 			break;		
+    case 11: // kaon production
+      e->flag.kaon=true;   
+			if(p.dyn_kaon) // change to kaon param type
+			{
+				kaonevent (p, *e, *_nucleus);
+			}
+			break;
 		case 12:
 			e->flag.lep=true; //->flag.cc=true;
 			if (p.dyn_lep) // Neutrino-lepton

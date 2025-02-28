@@ -234,6 +234,9 @@
   <param name="dyn_hyp_cc" type="checkbox" ctype="bool" default="1">
     <description>Hyperon production charged current</description>
   </param>
+  <param name="dyn_kaon" type="checkbox" ctype="bool" default="1">
+    <description>Single Kaon production charged current</description>
+  </param>
   <param name="dyn_lep" type="checkbox" ctype="bool" default="1">
     <description>Neutrino-electron scattering</description>
   </param>
@@ -474,6 +477,9 @@
   </param>
   <param name="hyp_Sigma_Eb" type="text" ctype="double" default="-70">
     <description>Sigma binding energy at max density; [10 MeV; -150 MeV]</description>
+  </param>
+  <param name="kaon_effmass" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Use kaon effective mass in cross section</description>
   </param>
   <param name="kaskada_on" type="checkbox" ctype="bool" default="1">
     <description><![CDATA[use (1) or not (0) the cascade]]></description>
