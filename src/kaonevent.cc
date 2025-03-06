@@ -54,123 +54,163 @@ double kaonevent(params& p, event& e, nucleus& t)
 
   // adjust the lepton flavour
   lepton.pdg = nu.pdg - (nu.pdg > 0 ? 1 : -1);
-
-  // set final particle masses
   lepton.set_mass(PDG::mass(lepton.pdg));
+
+	// assume first a proton in produced
+	N1.pdg = 2212;
+	N1.set_mass(PDG::mass(N1.pdg));
+
+	switch(N0.pdg) {
+		case PDG::pdg_proton:		// proton -> proton
+			kaon.pdg = 321;
+
+			// set form factors
+    	TwoThreeScatter::singlekaon::ACT = 2; 
+    	TwoThreeScatter::singlekaon::BCT = -TwoThreeScatter::singlekaon::F;
+    	TwoThreeScatter::singlekaon::ACRSigma = -(TwoThreeScatter::singlekaon::D - TwoThreeScatter::singlekaon::F) / 2;
+    	TwoThreeScatter::singlekaon::ACRLambda = TwoThreeScatter::singlekaon::D + 3*TwoThreeScatter::singlekaon::F;
+    	TwoThreeScatter::singlekaon::AKP = 2;
+    	TwoThreeScatter::singlekaon::APi = -1;
+    	TwoThreeScatter::singlekaon::AEta = 1;
+			break;
+
+		case PDG::pdg_neutron:	// neutron -> proton
+			kaon.pdg = 311;
+
+			// set form factors
+    	TwoThreeScatter::singlekaon::ACT = 1; 
+    	TwoThreeScatter::singlekaon::BCT = -TwoThreeScatter::singlekaon::D - TwoThreeScatter::singlekaon::F;
+    	TwoThreeScatter::singlekaon::ACRSigma = -(TwoThreeScatter::singlekaon::D - TwoThreeScatter::singlekaon::F);
+    	TwoThreeScatter::singlekaon::ACRLambda = TwoThreeScatter::singlekaon::D + 3*TwoThreeScatter::singlekaon::F;
+    	TwoThreeScatter::singlekaon::AKP = 1;
+    	TwoThreeScatter::singlekaon::APi = -2;
+    	TwoThreeScatter::singlekaon::AEta = 0;
+			break;
+	}
+	
+	kaon.set_mass(PDG::mass(kaon.pdg));
 
   particle N0_Eb = N0; // nucleon with 4 momentum adjusted for binding energy
   //N0_Eb.t -= _E_bind; will implement later
  
-  
+  // scatter
+ 	constexpr int num = 3; // number of produced particles
+ 	particle particles[num] = { lepton, kaon, N1 };
+ 	int q2 = scatter_n(num, nu, N0_Eb, particles);
+ 	if(q2==0){
+		//std::cout << "scatter error\n";
+	return 0; //indicates interaction is forbidden by kinematics
+	}
+	//std::cout << "scatter worked\n";
+
+	lepton = particles[0];
+	kaon = particles[1];
+	N1 = particles[2];
+
+	vect va{ N0_Eb };
+	vect vb{ nu };
+	vect v1{ N1 };
+	vect v2{ kaon };
+	vect v3{ lepton };
+
+	//std::cout << "va: " << va << '\n';
+	//std::cout << "vb: " << vb << '\n';
+	//std::cout << "v1: " << v1 << '\n';
+	//std::cout << "v2: " << v2 << '\n';
+	//std::cout << "v3: " << v3 << '\n';
+
+	vec vcms = (va + vb).v();
+
+	va.boost(-vcms);
+	vb.boost(-vcms);
+	v1.boost(-vcms);
+	v2.boost(-vcms);
+	v3.boost(-vcms);
+
+	vect v12{ v1 + v2 };
+
+	// generate vector with direction of W in CMS
+	vec cms_dir = vec(v3) / vec(v3).length();
 
   // cross section calculation
 
   // kinematic variables for cross-section calculation
   double Nuc0_mass{ N0.mass() };
-  double Nuc1_mass{ };
-  double Kaon_mass{ };
+  double Nuc1_mass{ N1.mass() };
+  double Kaon_mass{ kaon.mass() };
   double Lepton_mass{ lepton.mass() }; 
 
   double s{ e.s() };
-  double W{ };
-  double theta{ };
-
-  double xsec_proton{ };    // cross section for final state proton
-  double xsec_neutron{ };   // cross section for final state neutron
-
-  if(N0_Eb.pdg == 2212) {   // intital proton -> final state proton
-    // final proton
-    // set final kaon
-    kaon.pdg = 321;
-    kaon.set_mass(PDG::mass(kaon.pdg));
-    Kaon_mass = kaon.mass();
-
-    // set final nucleon
-    N1.pdg = 2212;          // proton
-    N1.set_mass(PDG::mass(N1.pdg));
-    Nuc1_mass = N1.mass();
-
-    // set form factors
-    TwoThreeScatter::singlekaon::ACT = 2; 
-    TwoThreeScatter::singlekaon::BCT = -TwoThreeScatter::singlekaon::F;
-    TwoThreeScatter::singlekaon::ACRSigma = -(TwoThreeScatter::singlekaon::D - TwoThreeScatter::singlekaon::F) / 2;
-    TwoThreeScatter::singlekaon::ACRLambda = TwoThreeScatter::singlekaon::D + 3*TwoThreeScatter::singlekaon::F;
-    TwoThreeScatter::singlekaon::AKP = 2;
-    TwoThreeScatter::singlekaon::APi = -1;
-    TwoThreeScatter::singlekaon::AEta = 1;
-
-    // set kinematic variables
-    W = e.W();
-    theta = std::acos(e.costheta());
-
-    // differential cross section
-    xsec_proton = single_kaon_diff_xsec(Nuc0_mass, Nuc1_mass, Kaon_mass, Lepton_mass, s, W, theta);
-    
-    // neutron
-    xsec_neutron = 0;
-  }
-
-  else if(N0_Eb.pdg == 2112) {    // initial neutron -> final state neutron or proton
-    // final proton
-    // set final kaon
-    kaon.pdg = 311;
-    kaon.set_mass(PDG::mass(kaon.pdg));
-    Kaon_mass = kaon.mass();
-
-    // set final nucleon
-    N1.pdg = 2212;          // proton
-    N1.set_mass(PDG::mass(N1.pdg));
-    Nuc1_mass = N1.mass();
-
-    // set form factors
-    TwoThreeScatter::singlekaon::ACT = 1; 
-    TwoThreeScatter::singlekaon::BCT = -TwoThreeScatter::singlekaon::D - TwoThreeScatter::singlekaon::F;
-    TwoThreeScatter::singlekaon::ACRSigma = -(TwoThreeScatter::singlekaon::D - TwoThreeScatter::singlekaon::F);
-    TwoThreeScatter::singlekaon::ACRLambda = TwoThreeScatter::singlekaon::D + 3*TwoThreeScatter::singlekaon::F;
-    TwoThreeScatter::singlekaon::AKP = 1;
-    TwoThreeScatter::singlekaon::APi = -2;
-    TwoThreeScatter::singlekaon::AEta = 0;
-    
-    // set kinematic variables
-    W = e.W();
-    theta = std::acos(e.costheta());
-
-    // differential cross section
-    xsec_proton = single_kaon_diff_xsec(Nuc0_mass, Nuc1_mass, Kaon_mass, Lepton_mass, s, W, theta);
-    
-    // neutron
-    // set final kaon
-    kaon.pdg = 321;
-    kaon.set_mass(PDG::mass(kaon.pdg));
-    Kaon_mass = kaon.mass();
-
-    // set final nucleon
-    N1.pdg = 2112;          // neutron
-    N1.set_mass(PDG::mass(N1.pdg));
-    Nuc1_mass = N1.mass();
-
-    // set form factors
-    TwoThreeScatter::singlekaon::ACT = 1; 
-    TwoThreeScatter::singlekaon::BCT = TwoThreeScatter::singlekaon::D - TwoThreeScatter::singlekaon::F;
-    TwoThreeScatter::singlekaon::ACRSigma = -(TwoThreeScatter::singlekaon::D - TwoThreeScatter::singlekaon::F);
-    TwoThreeScatter::singlekaon::ACRLambda = 0;
-    TwoThreeScatter::singlekaon::AKP = 1;
-    TwoThreeScatter::singlekaon::APi = 1;
-    TwoThreeScatter::singlekaon::AEta = 1;
-
-    // differential cross section
-    xsec_neutron = single_kaon_diff_xsec(Nuc0_mass, Nuc1_mass, Kaon_mass, Lepton_mass, s, W, theta);
-  }
+  double W{ std::sqrt(v12*v12) };
+	//std::cout << "W: " << W << '\n';
+	
+  double theta{ std::acos(v2.v()*vb.v() / (v2.v().length()*vb.v().length())) };
 
   // differential cross section
-  double xsec = (frandom() > xsec_proton / (xsec_proton + xsec_neutron)) ? xsec_neutron : xsec_proton;
+  double xsec = single_kaon_diff_xsec(Nuc0_mass, Nuc1_mass, Kaon_mass, Lepton_mass, s, W, theta);
 
-  // scatter
-  constexpr int num = 3; // number of produced particles
-  particle particles[num] = { lepton, kaon, N1 };
-  double q2 = scatter_n(num, nu, N0_Eb, particles);
-  
-  if(q2==0) return 0; //indicates interaction is forbidden by kinematics
+
+  if(N0_Eb.pdg == 2112) {    // neutron -> neutron
+		
+		double xsec_2{ 0 };
+
+		// new particles
+		particle lepton_2{ lepton };
+
+		particle kaon_2{ kaon };
+		kaon_2.pdg = 321;
+		kaon_2.set_mass(PDG::mass(kaon_2.pdg));
+
+		particle N1_2{ N1 };
+		N1_2.pdg = 2112;
+		N1_2.set_mass(PDG::mass(N1_2.pdg));
+
+		particle hadron_blob;
+		vect v12_2{ vect{ N1_2 } + vect{ kaon_2 } };
+		hadron_blob.set_mass(std::sqrt( v12_2*v12_2 ));
+		hadron_blob.p4() = v12_2;
+		//std::cout << "v12: " << vect{ hadron_blob } << '\n';
+
+		vect cms_Eb = vect{ N0_Eb } + vect{ nu };
+
+		if(rescale_momenta(cms_Eb, cms_dir, lepton_2, hadron_blob)) {
+
+			v3 = vect{ lepton_2 };
+			v12 = vect{ hadron_blob };
+			//std::cout << "Rescaled v12: " << v12 << '\n';
+
+			v3.boost(-vcms);
+			v12.boost(-vcms);
+
+			W = std::sqrt(v12 * v12);
+			//std::cout << "W: " << W << '\n';
+
+			theta = std::acos(v2.v()*vb.v() / (v2.v().length()*vb.v().length()));
+
+			// set form factors
+    	TwoThreeScatter::singlekaon::ACT = 1; 
+    	TwoThreeScatter::singlekaon::BCT = TwoThreeScatter::singlekaon::D - TwoThreeScatter::singlekaon::F;
+    	TwoThreeScatter::singlekaon::ACRSigma = -(TwoThreeScatter::singlekaon::D - TwoThreeScatter::singlekaon::F);
+    	TwoThreeScatter::singlekaon::ACRLambda = 0;
+    	TwoThreeScatter::singlekaon::AKP = 1;
+    	TwoThreeScatter::singlekaon::APi = 1;
+    	TwoThreeScatter::singlekaon::AEta = 1;
+
+			Nuc1_mass = N1_2.mass();
+			Kaon_mass = kaon_2.mass();
+
+			xsec_2 = single_kaon_diff_xsec(Nuc0_mass, Nuc1_mass, Kaon_mass, Lepton_mass, s, W, theta);
+
+			if(frandom() < xsec_2 / (xsec + xsec_2)) {
+				lepton = lepton_2;
+				hadron_blob.decay(N1_2, kaon_2);
+				N1 = N1_2;
+				kaon = kaon_2;
+			}
+
+			xsec += xsec_2;
+		}	
+	}
 
   e.temp.push_back(lepton);
   e.temp.push_back(kaon);
@@ -183,4 +223,5 @@ double kaonevent(params& p, event& e, nucleus& t)
 
   return e.weight * cm2;
 
+//	return 0;
 }
