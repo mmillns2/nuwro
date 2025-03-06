@@ -8,7 +8,7 @@ double kallen(double x, double y, double z)
 {
 	double ret{ std::pow(x, 4) + std::pow(y, 4) + std::pow(z, 4) - 2*std::pow(x, 2)*std::pow(y, 2) 
 				 - 2*std::pow(x, 2)*std::pow(z, 2) - 2*std::pow(y, 2)*std::pow(z, 2) }; 	
-	if(fabs(ret) < 1e-10)
+	if(fabs(ret) < 1e-5)
 		    ret = 0;
 	assert(ret >= 0);
 	return std::sqrt(ret);
