@@ -48,14 +48,14 @@ double simpson2D(double thetaStar_min, double thetaStar_max, double phiStar_min,
 
 double single_kaon_diff_xsec(double ma, double m1, double m2, double m3, double s, double W, double theta) {
   // step numbers
-  int thetaStar_n{ 3 };
-  int phiStar_n{ 3 };
+  int thetaStar_n{ 18 };
+  int phiStar_n{ 18 };
 
   // integration limits
   double thetaStar_min{ 0 };
-  double thetaStar_max{ M_PI };
+  double thetaStar_max{ 3.14 };
   double phiStar_min{ 0 };
-  double phiStar_max{ 2*M_PI };
+  double phiStar_max{ 2*3.14 };
 
   // integral
   double p1p2{ TwoThreeScatter::Ep1(s, ma)*TwoThreeScatter::Ep2(s, ma) - 
@@ -70,7 +70,8 @@ double single_kaon_diff_xsec(double ma, double m1, double m2, double m3, double 
   double numerator{ TwoThreeScatter::kallen(std::sqrt(s), W, m3) * TwoThreeScatter::kallen(W, m1, m2) };
 	//double numerator = k1 * k2;
 	//std::cout << "numerator made\n";
-  double denominator{ 128 * std::pow(2*M_PI, 5) * p1p2 * W * s };
+  double denominator{ 128 * std::pow(2*3.14, 5) * p1p2 * W * s };
+
 
   double integral = simpson2D(thetaStar_min, thetaStar_max, phiStar_min, phiStar_max, thetaStar_n, phiStar_n, ma, m1, m2, m3, s, W, theta);
 

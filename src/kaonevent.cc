@@ -25,7 +25,7 @@
 #define LOCALKF localkf_O
 
 
-double kaonevent(params& p, event& e, nucleus& t)
+double kaonevent_2(params& p, event& e, nucleus& t)
 {
   /*
 
@@ -140,16 +140,17 @@ double kaonevent(params& p, event& e, nucleus& t)
   double Kaon_mass{ kaon.mass() };
   double Lepton_mass{ lepton.mass() }; 
 
-  double s{ e.s() };
+  double s{ (va + vb) * (va + vb) };
   double W{ std::sqrt(v12*v12) };
 	//std::cout << "W: " << W << '\n';
+	//std::cout << "s: " << s << '\n';
 	
   double theta{ std::acos(v2.v()*vb.v() / (v2.v().length()*vb.v().length())) };
 
   // differential cross section
   double xsec = single_kaon_diff_xsec(Nuc0_mass, Nuc1_mass, Kaon_mass, Lepton_mass, s, W, theta);
 
-
+/*
   if(N0_Eb.pdg == 2112) {    // neutron -> neutron
 		
 		double xsec_2{ 0 };
@@ -211,7 +212,7 @@ double kaonevent(params& p, event& e, nucleus& t)
 			xsec += xsec_2;
 		}	
 	}
-
+*/
   e.temp.push_back(lepton);
   e.temp.push_back(kaon);
   e.temp.push_back(N1);
@@ -220,6 +221,10 @@ double kaonevent(params& p, event& e, nucleus& t)
   e.out.push_back(N1);
 
   e.weight = xsec / cm2;
+	
+	//std::cout << cm2 << '\n';
+
+	//std::cout << xsec << '\n';
 
   return e.weight * cm2;
 
@@ -227,7 +232,7 @@ double kaonevent(params& p, event& e, nucleus& t)
 }
 
 
-double kaonevent_2(params& p, event& e, nucleus& t)
+double kaonevent(params& p, event& e, nucleus& t)
 {
   /*
 
@@ -338,7 +343,7 @@ double kaonevent_2(params& p, event& e, nucleus& t)
   vect cms_vects[6] = { p1, p2, q1, q2, q3, q };
   double xsec = single_kaon_diff_xsec_2(s, Nuc1_mass, Kaon_mass, Lepton_mass, cms_vects);
 
-
+/*
   if(N0_Eb.pdg == 2112) {    // neutron -> neutron
 		
 		double xsec_2{ 0 };
@@ -403,7 +408,7 @@ double kaonevent_2(params& p, event& e, nucleus& t)
 			xsec += xsec_2;
 		}	
 	}
-
+*/
   e.temp.push_back(lepton);
   e.temp.push_back(kaon);
   e.temp.push_back(N1);
