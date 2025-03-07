@@ -54,7 +54,7 @@ vect Momentum(Four_mom_type k, double ma, double m1, double m2, double m3, doubl
 */
 
 // { p1, p2, q1, q2, q3, q }
-vect Momentum(Four_mom_type k, vect vects[6]);
+vect Momentum(Four_mom_type k, double m1, double m2, double m3, vect vects[6]);
 /*
  
 */

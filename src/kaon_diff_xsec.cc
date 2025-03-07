@@ -83,7 +83,7 @@ double single_kaon_diff_xsec(double ma, double m1, double m2, double m3, double 
 
 
 // { p1, p2, q1, q2, q3, q }
-double single_kaon_sum_square_matrix_element(vect vects[6]) {
+double single_kaon_sum_square_matrix_element(double ma, double m1, double m2, double m3, vect vects[6]) {
 
   constexpr double GF{ 1.16639e-11 };
 
@@ -93,7 +93,7 @@ double single_kaon_sum_square_matrix_element(vect vects[6]) {
 
   double mat{ 0 };  // add all contributing matrix elements to mat
 
-  mat += TwoThreeScatter::singlekaon::CT(vects);
+  mat += TwoThreeScatter::singlekaon::CT(ma, m1, m2, m3, vects);
 
   return 0.25 * GF*GF * mat;
    
@@ -130,7 +130,7 @@ double single_kaon_diff_xsec_2(double s, double N1_mass, double kaon_mass, doubl
     q1_star.boost(-vcms);
     q2_star.boost(-vcms);
 
-    diff_xsec += single_kaon_sum_square_matrix_element(vects);
+    diff_xsec += single_kaon_sum_square_matrix_element(N1_mass, N1_mass, kaon_mass, lepton_mass, vects);
   }
 
   double W{ std::sqrt(q12*q12) };
