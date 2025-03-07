@@ -12,7 +12,7 @@ namespace singlekaon {
 constexpr double D{ 0.804 };
 constexpr double F{ 0.463 };
 constexpr double Vus{ 0.22 };
-constexpr double fPi{ 92.4e-3 };
+constexpr double fPi{ 92.4 };
 constexpr double mSigma{  };
 constexpr double mLambda{  };
 constexpr double mPi{  };

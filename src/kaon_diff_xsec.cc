@@ -6,7 +6,7 @@
 
 double single_kaon_integrand(double ma, double m1, double m2, double m3, double s, double W, double theta, double thetaStar, double phiStar) {
 
-  constexpr double GF{ 1.16639e-5 };
+  constexpr double GF{ 1.16639e-11 };
 
   // this will include the neccessary contributions to the matrix element
   // neutrino or anti-neutrinio?
@@ -84,7 +84,7 @@ double single_kaon_diff_xsec(double ma, double m1, double m2, double m3, double 
 // { p1, p2, q1, q2, q3, q }
 double single_kaon_sum_square_matrix_element(vect vects[6]) {
 
-  constexpr double GF{ 1.16639e-5 };
+  constexpr double GF{ 1.16639e-11 };
 
   // this will include the neccessary contributions to the matrix element
   // neutrino or anti-neutrinio?
@@ -137,7 +137,7 @@ double single_kaon_diff_xsec_2(double s, double N1_mass, double kaon_mass, doubl
   double numerator{ TwoThreeScatter::kallen(std::sqrt(s), W, lepton_mass) * TwoThreeScatter::kallen(W, N1_mass, kaon_mass) };
   double denominator{ 128 * std::pow(2*M_PI, 5) * (vects[0]*vects[1]) * W * s };
 
-  return (1.0/num_decays) * (numerator / denominator) * diff_xsec;
+  return 4*M_PI * (1.0/num_decays) * (numerator / denominator) * diff_xsec;
 }
 
 
