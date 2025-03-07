@@ -17,7 +17,6 @@ enum Four_mom_type {
   q2,   // outgoing kaon
   q3,   // outgoing lepton
   q,    // 4-momentum transfer = p2 - q3 = q1 - p1
-  max_types
 };
  
 double kallen(double x, double y, double z);
@@ -52,6 +51,12 @@ double q23(double m1, double m2, double m3, double s, double W, double theta, do
 vect Momentum(Four_mom_type k, double ma, double m1, double m2, double m3, double s, double W, double theta, double thetaStar, double phiStar);
 /*
   This function translates the Momentum() fuction outputted by Cform to a (4-)vect
+*/
+
+// { p1, p2, q1, q2, q3, q }
+vect Momentum(Four_mom_type k, vect vects[6]);
+/*
+ 
 */
 
 double Pair(vect k1, vect k2);

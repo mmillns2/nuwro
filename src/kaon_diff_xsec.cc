@@ -76,3 +76,73 @@ double single_kaon_diff_xsec(double ma, double m1, double m2, double m3, double 
 
   return (numerator / denominator) * integral;
 }
+
+
+// take 2
+
+
+// { p1, p2, q1, q2, q3, q }
+double single_kaon_sum_square_matrix_element(vect vects[6]) {
+
+  constexpr double GF{ 1.16639e-5 };
+
+  // this will include the neccessary contributions to the matrix element
+  // neutrino or anti-neutrinio?
+  // have a switch cas of Params here
+
+  double mat{ 0 };  // add all contributing matrix elements to mat
+
+  mat += TwoThreeScatter::singlekaon::CT(vects);
+
+  return 0.25 * GF*GF * mat;
+   
+}
+
+
+// { p1, p2, q1, q2, q3, q }
+double single_kaon_diff_xsec_2(double s, double N1_mass, double kaon_mass, double lepton_mass, vect vects[6]) {
+  
+  constexpr int num_decays{ 100 };
+
+  vect q12{ vects[2] + vects[3] };
+
+  particle hadron_blob;
+  hadron_blob.p4() = q12;
+  hadron_blob.set_mass(std::sqrt(q12*q12));
+
+  vec pair_dir{ q12.v() };
+  vec vcms{ (vects[0] + vects[1]).v() };
+
+  double diff_xsec{ 0 };
+  
+  for(int i{ 0 }; i < num_decays; i++) {
+
+    particle N1_star;
+    particle kaon_star;
+    N1_star.set_mass(N1_mass);
+    kaon_star.set_mass(kaon_mass);
+    hadron_blob.decay(N1_star, kaon_star); 
+
+    vect q1_star{ N1_star };
+    vect q2_star{ kaon_star };
+
+    q1_star.boost(-vcms);
+    q2_star.boost(-vcms);
+
+    diff_xsec += single_kaon_sum_square_matrix_element(vects);
+  }
+
+  double W{ std::sqrt(q12*q12) };
+
+  double numerator{ TwoThreeScatter::kallen(std::sqrt(s), W, lepton_mass) * TwoThreeScatter::kallen(W, N1_mass, kaon_mass) };
+  double denominator{ 128 * std::pow(2*M_PI, 5) * (vects[0]*vects[1]) * W * s };
+
+  return (1.0/num_decays) * (numerator / denominator) * diff_xsec;
+}
+
+
+
+
+
+
+

@@ -33,6 +33,9 @@ inline double AEta;
 // matrix elements
 double CT(double ma, double m1, double m2, double m3, double s, double W, double theta, double thetaStar, double phiStar);
 
+
+double CT(vect vects[6]);
+
 }
 }
 
