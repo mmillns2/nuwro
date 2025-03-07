@@ -295,6 +295,9 @@ double kaonevent(params& p, event& e, nucleus& t)
 			break;
 	}
 	
+	//std::cout << "ACT: " << TwoThreeScatter::singlekaon::ACT << '\n';
+	//std::cout << "BCT: " << TwoThreeScatter::singlekaon::BCT << '\n';
+	
 	kaon.set_mass(PDG::mass(kaon.pdg));
 
   particle N0_Eb = N0; // nucleon with 4 momentum adjusted for binding energy
@@ -338,7 +341,7 @@ double kaonevent(params& p, event& e, nucleus& t)
   double Lepton_mass{ lepton.mass() }; 
 
   double s{ e.s() };
-	
+
   // differential cross section
   vect cms_vects[6] = { p1, p2, q1, q2, q3, q };
   double xsec = single_kaon_diff_xsec_2(s, Nuc1_mass, Kaon_mass, Lepton_mass, cms_vects);
