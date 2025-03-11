@@ -25,7 +25,7 @@
 #define LOCALKF localkf_O
 
 
-double kaonevent_2(params& p, event& e, nucleus& t)
+double kaonevent2(params& p, event& e, nucleus& t)
 {
   /*
 
@@ -340,7 +340,7 @@ double kaonevent(params& p, event& e, nucleus& t)
   double Kaon_mass{ kaon.mass() };
   double Lepton_mass{ lepton.mass() }; 
 
-  double s{ e.s() };
+  double s{ (p1+p2)*(p1+p2) };
 
   // differential cross section
   vect cms_vects[6] = { p1, p2, q1, q2, q3, q };

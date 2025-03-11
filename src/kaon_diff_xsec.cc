@@ -61,17 +61,8 @@ double single_kaon_diff_xsec(double ma, double m1, double m2, double m3, double 
   double p1p2{ TwoThreeScatter::Ep1(s, ma)*TwoThreeScatter::Ep2(s, ma) - 
                TwoThreeScatter::Ep2(s, ma)*std::sqrt(TwoThreeScatter::Ep1(s, ma)*TwoThreeScatter::Ep1(s, ma) - ma*ma) };
   
-	//std::cout << "attemting k1\n";
-	//double k1 = TwoThreeScatter::kallen(std::sqrt(s), W, m3);
-	//std::cout << "made k1\n";
-	//std::cout << "attemting k2\n";
-	//double k2 = TwoThreeScatter::kallen(W, m1, m2);
-	//std::cout << "made k2\n";
   double numerator{ TwoThreeScatter::kallen(std::sqrt(s), W, m3) * TwoThreeScatter::kallen(W, m1, m2) };
-	//double numerator = k1 * k2;
-	//std::cout << "numerator made\n";
   double denominator{ 128 * std::pow(2*3.14, 5) * p1p2 * W * s };
-
 
   double integral = simpson2D(thetaStar_min, thetaStar_max, phiStar_min, phiStar_max, thetaStar_n, phiStar_n, ma, m1, m2, m3, s, W, theta);
 
@@ -95,7 +86,7 @@ double single_kaon_sum_square_matrix_element(double ma, double m1, double m2, do
 
   mat += TwoThreeScatter::singlekaon::CT(ma, m1, m2, m3, vects);
 
-  return 0.25 * GF*GF * mat;
+  return GF*GF * mat;
    
 }
 
@@ -103,17 +94,24 @@ double single_kaon_sum_square_matrix_element(double ma, double m1, double m2, do
 // { p1, p2, q1, q2, q3, q }
 double single_kaon_diff_xsec_2(double s, double N1_mass, double kaon_mass, double lepton_mass, vect vects[6]) {
   
-  constexpr int num_decays{ 100 };
+  constexpr int num_decays{ 1 };
 
   vect q12{ vects[2] + vects[3] };
+
+	// integrate over W
+	double W_min{ kaon_mass + N1_mass };
+	double W_max{ std::sqrt(s) - lepton_mass };
+	//double W{ W_min + W_max*frandom() };
+	double dW{ W_max - W_min };
 
   particle hadron_blob;
   hadron_blob.p4() = q12;
   hadron_blob.set_mass(std::sqrt(q12*q12));
+  //hadron_blob.set_mass(W);
 
   vec pair_dir{ q12.v() };
   vec vcms{ (vects[0] + vects[1]).v() };
-
+	
   double diff_xsec{ 0 };
   
   for(int i{ 0 }; i < num_decays; i++) {
@@ -133,12 +131,16 @@ double single_kaon_diff_xsec_2(double s, double N1_mass, double kaon_mass, doubl
     diff_xsec += single_kaon_sum_square_matrix_element(N1_mass, N1_mass, kaon_mass, lepton_mass, vects);
   }
 
+	vect q{ vects[5] };
+	double Q2{ -q*q };
+	double dipoleff{ ( 1/(1 + (Q2/1e6)) ) * ( 1/(1 + (Q2/1e6)) ) }; 
+
   double W{ std::sqrt(q12*q12) };
 
   double numerator{ TwoThreeScatter::kallen(std::sqrt(s), W, lepton_mass) * TwoThreeScatter::kallen(W, N1_mass, kaon_mass) };
   double denominator{ 128 * std::pow(2*M_PI, 5) * (vects[0]*vects[1]) * W * s };
 
-  return 4*M_PI * (1.0/num_decays) * (numerator / denominator) * diff_xsec;
+  return dipoleff * 4*M_PI * (1.0/num_decays) * dW * (numerator / denominator) * diff_xsec;
 }
 
 

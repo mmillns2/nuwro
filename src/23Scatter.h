@@ -59,6 +59,12 @@ vect Momentum(Four_mom_type k, double m1, double m2, double m3, vect vects[6]);
  
 */
 
+// { p1, p2, q1, q2, q3, q }
+vect Momentum(Four_mom_type k, vect vects[6]);
+/*
+ 
+*/
+
 double Pair(vect k1, vect k2);
 /*
   This function translates the Pair() fuction outputted by Cform to a dot-product

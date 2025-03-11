@@ -36,6 +36,8 @@ double CT(double ma, double m1, double m2, double m3, double s, double W, double
 
 double CT(double ma, double m1, double m2, double m3, vect vects[6]);
 
+double CT_sem1(double ma, double m1, double m2, double m3, vect vects[6]);
+
 }
 }
 
