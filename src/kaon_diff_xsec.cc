@@ -84,7 +84,12 @@ double single_kaon_sum_square_matrix_element(double ma, double m1, double m2, do
 
   double mat{ 0 };  // add all contributing matrix elements to mat
 
-  mat += TwoThreeScatter::singlekaon::CT(ma, m1, m2, m3, vects);
+  //mat += TwoThreeScatter::singlekaon::CT(ma, m1, m2, m3, vects);
+  //mat += TwoThreeScatter::singlekaon::CrossSigma(ma, m1, m2, m3, vects);
+  mat += TwoThreeScatter::singlekaon::CrossLambda(ma, m1, m2, m3, vects);
+  //mat += TwoThreeScatter::singlekaon::PionInFlight(ma, m1, m2, m3, vects);
+  //mat += TwoThreeScatter::singlekaon::EtaInFlight(ma, m1, m2, m3, vects);
+  //mat += TwoThreeScatter::singlekaon::KaonPole(ma, m1, m2, m3, vects);
 
   return GF*GF * mat;
    
