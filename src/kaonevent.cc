@@ -270,6 +270,8 @@ double kaonevent(params& p, event& e, nucleus& t)
 	switch(N0.pdg) {
 		case PDG::pdg_proton:		// proton -> proton
 			kaon.pdg = 321;
+			
+			//std::cout << "proton\n";
 
 			// set form factors
     	TwoThreeScatter::singlekaon::ACT = 2; 
@@ -284,10 +286,12 @@ double kaonevent(params& p, event& e, nucleus& t)
 		case PDG::pdg_neutron:	// neutron -> proton
 			kaon.pdg = 311;
 
+			std::cout << "error\n";
+
 			// set form factors
     	TwoThreeScatter::singlekaon::ACT = 1; 
     	TwoThreeScatter::singlekaon::BCT = -TwoThreeScatter::singlekaon::D - TwoThreeScatter::singlekaon::F;
-    	TwoThreeScatter::singlekaon::ACRSigma = -(TwoThreeScatter::singlekaon::D - TwoThreeScatter::singlekaon::F);
+    	TwoThreeScatter::singlekaon::ACRSigma = (TwoThreeScatter::singlekaon::D - TwoThreeScatter::singlekaon::F)/2;
     	TwoThreeScatter::singlekaon::ACRLambda = TwoThreeScatter::singlekaon::D + 3*TwoThreeScatter::singlekaon::F;
     	TwoThreeScatter::singlekaon::AKP = 1;
     	TwoThreeScatter::singlekaon::APi = -2;

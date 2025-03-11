@@ -13,10 +13,10 @@ constexpr double D{ 0.804 };
 constexpr double F{ 0.463 };
 constexpr double Vus{ 0.22 };
 constexpr double fPi{ 92.4 };
-constexpr double mSigma{  };
-constexpr double mLambda{  };
-constexpr double mPi{  };
-constexpr double mEta{  };
+constexpr double mSigma{ 1192.46 };
+constexpr double mLambda{ 1115.68 };
+constexpr double mPi{ 134.98 };
+constexpr double mEta{ 547.86 };
 constexpr double kappaP{ 1.7928 };
 constexpr double kappaN{ -1.9130 };
 
