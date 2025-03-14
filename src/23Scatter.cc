@@ -206,6 +206,10 @@ double Power(double x, int n) {
   return std::pow(x, n);
 }
 
+double Power(vect x, int n) {
+  return x*x;
+}
+
 double Eps(vect k1, vect k2, vect k3, vect k4) {
   double ret{ 0 };
   for(int i{ 0 }; i < 4; i++) {

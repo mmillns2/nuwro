@@ -74,6 +74,10 @@ double Power(double x, int n);
 /*
   This function translates the Power() fuction outputted by Cform to a std::pow
 */
+double Power(vect x, int n);
+/*
+  Overload for the power function
+*/
 
 // 4D Levi-Civita functionality
 using LeviCivitaTable = std::array<std::array<std::array<std::array<int, 4>, 4>, 4>, 4>;
