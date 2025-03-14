@@ -6,7 +6,7 @@ namespace TwoThreeScatter {
 namespace singlekaon {
 
 
-double CT(double ma, double m1, double m2, double m3, vect vects[6]) {
+double CT_(double ma, double m1, double m2, double m3, vect vects[6]) {
   return (64*Power(ACT,2)*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)))/Power(fPi,2) + 
    (128*Power(ACT,2)*BCT*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)))/Power(fPi,2) + 
    (64*Power(ACT,2)*Power(BCT,2)*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)))/Power(fPi,2) - 
@@ -18,7 +18,7 @@ double CT(double ma, double m1, double m2, double m3, vect vects[6]) {
 }
 
 
-double CT_sem1(double ma, double m1, double m2, double m3, vect vects[6]) {	
+double CT_sem1_(double ma, double m1, double m2, double m3, vect vects[6]) {	
 
 	double a = Pair(Momentum(p1,m1,m2,m3,vects),Momentum(p2,m1,m2,m3,vects));
 	double b = Pair(Momentum(p1,m1,m2,m3,vects),Momentum(q1,m1,m2,m3,vects));
@@ -58,7 +58,7 @@ double CT(double ma, double m1, double m2, double m3, double s, double W, double
 }
 
 
-double CrossLambda(double ma, double m1, double m2, double m3, vect vects[6]) {
+double CrossLambda_(double ma, double m1, double m2, double m3, vect vects[6]) {
   return (Power(ACRLambda,2)*Power(Vus,2)*((32*(D + 3*F)*(-((2*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)) - 
                  2*Pair(Momentum(p1,vects),Momentum(p2,vects))*Pair(Momentum(q1,vects),Momentum(q3,vects)))*
                (-4*Power(Pair(Momentum(p1,vects),Momentum(q2,vects)),2) + 4*Pair(Momentum(p1,vects),Momentum(q2,vects))*Pair(Momentum(q2,vects),Momentum(q2,vects)) + 
@@ -453,7 +453,7 @@ double CrossLambda(double ma, double m1, double m2, double m3, vect vects[6]) {
 }
 
 
-double PionInFlight(double ma, double m1, double m2, double m3, vect vects[6]) {
+double PionInFlight_(double ma, double m1, double m2, double m3, vect vects[6]) {
   return (8*Power(APi,2)*Power(D + F,2)*Power(ma,2)*Power(Vus,2)*(m1*ma - Pair(Momentum(p1,vects),Momentum(q1,vects)))*
      (Pair(Momentum(p2,vects),Momentum(q3,vects))*(-4*Pair(Momentum(q2,vects),Momentum(q2,vects)) + Pair(Momentum(q3,vects),Momentum(q3,vects))) + 
        4*Pair(Momentum(p2,vects),Momentum(q2,vects))*(2*Pair(Momentum(q2,vects),Momentum(q3,vects)) + Pair(Momentum(q3,vects),Momentum(q3,vects))) + 
@@ -462,7 +462,7 @@ double PionInFlight(double ma, double m1, double m2, double m3, vect vects[6]) {
    (Power(fPi,2)*Power(mPi + q - q2,2)*Power(mPi - q + q2,2));
 }
 
-double EtaInFlight(double ma, double m1, double m2, double m3, vect vects[6]) {
+double EtaInFlight_(double ma, double m1, double m2, double m3, vect vects[6]) {
   return (8*Power(AEta,2)*Power(D - 3*F,2)*Power(ma,2)*Power(Vus,2)*(m1*ma - Pair(Momentum(p1,vects),Momentum(q1,vects)))*
      (Pair(Momentum(p2,vects),Momentum(q3,vects))*(-4*Pair(Momentum(q2,vects),Momentum(q2,vects)) + Pair(Momentum(q3,vects),Momentum(q3,vects))) + 
        4*Pair(Momentum(p2,vects),Momentum(q2,vects))*(2*Pair(Momentum(q2,vects),Momentum(q3,vects)) + Pair(Momentum(q3,vects),Momentum(q3,vects))) + 
@@ -471,7 +471,7 @@ double EtaInFlight(double ma, double m1, double m2, double m3, vect vects[6]) {
    (Power(fPi,2)*Power(mEta + q - q2,2)*Power(mEta - q + q2,2));
 }
 
-double CrossSigma(double ma, double m1, double m2, double m3, vect vects[6]) {
+double CrossSigma_(double ma, double m1, double m2, double m3, vect vects[6]) {
   return (Power(ACRSigma,2)*Power(Vus,2)*((32*(D - F)*((2*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)) - 
                2*Pair(Momentum(p1,vects),Momentum(p2,vects))*Pair(Momentum(q1,vects),Momentum(q3,vects)))*
              (-4*Power(Pair(Momentum(p1,vects),Momentum(q2,vects)),2) + 4*Pair(Momentum(p1,vects),Momentum(q2,vects))*Pair(Momentum(q2,vects),Momentum(q2,vects)) + 
@@ -771,7 +771,7 @@ double CrossSigma(double ma, double m1, double m2, double m3, vect vects[6]) {
                       Pair(Momentum(q3,vects),Momentum(q3,vects)))))))/(Power(ma,2)*(Power (p1 - q2, 2) - Power (mSigma, 2)))))/(8.*Power(fPi,2));
 }
 
-double KaonPole(double ma, double m1, double m2, double m3, vect vects[6]) {
+double KaonPole_(double ma, double m1, double m2, double m3, vect vects[6]) {
   return (2*Power(AKP,2)*Power(Vus,2)*((m1*ma - Pair(Momentum(p1,vects),Momentum(q1,vects)))*Pair(Momentum(q,vects),Momentum(q,vects)) + 
        2*Pair(Momentum(p1,vects),Momentum(q2,vects))*Pair(Momentum(q,vects),Momentum(q1,vects)) + 2*m1*ma*Pair(Momentum(q,vects),Momentum(q2,vects)) - 
        2*Pair(Momentum(p1,vects),Momentum(q1,vects))*Pair(Momentum(q,vects),Momentum(q2,vects)) + 

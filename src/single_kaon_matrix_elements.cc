@@ -6,21 +6,21 @@ namespace singlekaon
 {
   double CT(double ma, double m1, double m2, double m3, vect vects[6])
   {
-    // Not included GF squared factor here; have included the missing 1/4 factor
-    (16*Power(ACT,2)*Power(GF,2)*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)))/Power(fPi,2) + 
-(32*Power(ACT,2)*BCT*Power(GF,2)*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)))/Power(fPi,2) + 
-(16*Power(ACT,2)*Power(BCT,2)*Power(GF,2)*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)))/Power(fPi,2) - 
-(16*Power(ACT,2)*Power(GF,2)*m1*ma*Power(Vus,2)*Pair(Momentum(p2,vects),Momentum(q3,vects)))/Power(fPi,2) + 
-(16*Power(ACT,2)*Power(BCT,2)*Power(GF,2)*m1*ma*Power(Vus,2)*Pair(Momentum(p2,vects),Momentum(q3,vects)))/Power(fPi,2) + 
-(16*Power(ACT,2)*Power(GF,2)*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(p2,vects))*Pair(Momentum(q1,vects),Momentum(q3,vects)))/Power(fPi,2) - 
-(32*Power(ACT,2)*BCT*Power(GF,2)*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(p2,vects))*Pair(Momentum(q1,vects),Momentum(q3,vects)))/Power(fPi,2) + 
-(16*Power(ACT,2)*Power(BCT,2)*Power(GF,2)*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(p2,vects))*Pair(Momentum(q1,vects),Momentum(q3,vects)))/Power(fPi,2);
+      // Not included GF squared factor here; have included the missing 1/4 factor
+      return (16*Power(ACT,2)*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)))/Power(fPi,2) + 
+(32*Power(ACT,2)*BCT*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)))/Power(fPi,2) + 
+(16*Power(ACT,2)*Power(BCT,2)*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)))/Power(fPi,2) - 
+(16*Power(ACT,2)*m1*ma*Power(Vus,2)*Pair(Momentum(p2,vects),Momentum(q3,vects)))/Power(fPi,2) + 
+(16*Power(ACT,2)*Power(BCT,2)*m1*ma*Power(Vus,2)*Pair(Momentum(p2,vects),Momentum(q3,vects)))/Power(fPi,2) + 
+(16*Power(ACT,2)*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(p2,vects))*Pair(Momentum(q1,vects),Momentum(q3,vects)))/Power(fPi,2) - 
+(32*Power(ACT,2)*BCT*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(p2,vects))*Pair(Momentum(q1,vects),Momentum(q3,vects)))/Power(fPi,2) + 
+(16*Power(ACT,2)*Power(BCT,2)*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(p2,vects))*Pair(Momentum(q1,vects),Momentum(q3,vects)))/Power(fPi,2);
   }
 
   double CrossSigma(double ma, double m1, double m2, double m3, vect vects[6])
-  {
-    // Not included GF squared factor here; have included the missing 1/4 factor
-    (Power(ACRSigma,2)*Power(Vus,2)*((32*(D - F)*((2*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)) - 
+   {
+      // Not included GF squared factor here; have included the missing 1/4 factor
+      return (Power(ACRSigma,2)*Power(Vus,2)*((32*(D - F)*((2*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)) - 
 2*Pair(Momentum(p1,vects),Momentum(p2,vects))*Pair(Momentum(q1,vects),Momentum(q3,vects)))*
 (-4*Power(Pair(Momentum(p1,vects),Momentum(q2,vects)),2) + 4*Pair(Momentum(p1,vects),Momentum(q2,vects))*Pair(Momentum(q2,vects),Momentum(q2,vects)) + 
 (2*ma*mSigma + Power(mSigma,2) + Pair(Momentum(p1,vects),Momentum(p1,vects)) - Pair(Momentum(q2,vects),Momentum(q2,vects)))*
@@ -321,8 +321,8 @@ Pair(Momentum(p2,vects),Momentum(p2,vects))*(Pair(Momentum(p2,vects),Momentum(q3
 
   double CrossLambda(double ma, double m1, double m2, double m3, vect vects[6])
   {
-    // Not included GF squared factor here; have included the missing 1/4 factor
-    (Power(ACRLambda,2)*Power(Vus,2)*((32*(D + 3*F)*(-((2*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)) - 
+      // Not included GF squared factor here; have included the missing 1/4 factor
+      return (Power(ACRLambda,2)*Power(Vus,2)*((32*(D + 3*F)*(-((2*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)) - 
 2*Pair(Momentum(p1,vects),Momentum(p2,vects))*Pair(Momentum(q1,vects),Momentum(q3,vects)))*
 (-4*Power(Pair(Momentum(p1,vects),Momentum(q2,vects)),2) + 4*Pair(Momentum(p1,vects),Momentum(q2,vects))*Pair(Momentum(q2,vects),Momentum(q2,vects)) + 
 (2*ma*mLambda + Power(mLambda,2) + Pair(Momentum(p1,vects),Momentum(p1,vects)) - Pair(Momentum(q2,vects),Momentum(q2,vects)))*
@@ -627,7 +627,7 @@ Pair(Momentum(p2,vects),Momentum(p2,vects))*(Pair(Momentum(p2,vects),Momentum(q3
   double KaonPole(double ma, double m1, double m2, double m3, vect vects[6])
   {
     // Not included GF squared factor here; have included the missing 1/4 factor
-    (Power(AKP,2)*Power(GF,2)*Power(Vus,2)*((m1*ma - Pair(Momentum(p1,vects),Momentum(q1,vects)))*Pair(Momentum(q,vects),Momentum(q,vects)) + 
+     return (Power(AKP,2)*Power(Vus,2)*((m1*ma - Pair(Momentum(p1,vects),Momentum(q1,vects)))*Pair(Momentum(q,vects),Momentum(q,vects)) + 
        2*Pair(Momentum(p1,vects),Momentum(q2,vects))*Pair(Momentum(q,vects),Momentum(q1,vects)) + 2*m1*ma*Pair(Momentum(q,vects),Momentum(q2,vects)) - 
        2*Pair(Momentum(p1,vects),Momentum(q1,vects))*Pair(Momentum(q,vects),Momentum(q2,vects)) + 
        2*Pair(Momentum(p1,vects),Momentum(q2,vects))*Pair(Momentum(q1,vects),Momentum(q2,vects)) + 
@@ -640,7 +640,7 @@ Pair(Momentum(p2,vects),Momentum(p2,vects))*(Pair(Momentum(p2,vects),Momentum(q3
   double PionInFlight(double ma, double m1, double m2, double m3, vect vects[6])
   {
     // Not included GF squared factor here; have included the missing 1/4 factor
-    (2*Power(APi,2)*Power(D + F,2)*Power(ma,2)*Power(Vus,2)*(m1*ma - Pair(Momentum(p1,vects),Momentum(q1,vects)))*
+     return (2*Power(APi,2)*Power(D + F,2)*Power(ma,2)*Power(Vus,2)*(m1*ma - Pair(Momentum(p1,vects),Momentum(q1,vects)))*
 (Pair(Momentum(p2,vects),Momentum(q3,vects))*(-4*Pair(Momentum(q2,vects),Momentum(q2,vects)) + Pair(Momentum(q3,vects),Momentum(q3,vects))) + 
   4*Pair(Momentum(p2,vects),Momentum(q2,vects))*(2*Pair(Momentum(q2,vects),Momentum(q3,vects)) + Pair(Momentum(q3,vects),Momentum(q3,vects))) + 
   Pair(Momentum(p2,vects),Momentum(p2,vects))*(Pair(Momentum(p2,vects),Momentum(q3,vects)) - 
@@ -649,8 +649,8 @@ Pair(Momentum(p2,vects),Momentum(p2,vects))*(Pair(Momentum(p2,vects),Momentum(q3
 
   double EtaInFlight(double ma, double m1, double m2, double m3, vect vects[6])
   {
-    // Not included GF squared factor here; have included the missing 1/4 factor
-    (2*Power(AEta,2)*Power(D - 3*F,2)*Power(ma,2)*Power(Vus,2)*(m1*ma - Pair(Momentum(p1,vects),Momentum(q1,vects)))*
+     // Not included GF squared factor here; have included the missing 1/4 factor
+     return (2*Power(AEta,2)*Power(D - 3*F,2)*Power(ma,2)*Power(Vus,2)*(m1*ma - Pair(Momentum(p1,vects),Momentum(q1,vects)))*
 (Pair(Momentum(p2,vects),Momentum(q3,vects))*(-4*Pair(Momentum(q2,vects),Momentum(q2,vects)) + Pair(Momentum(q3,vects),Momentum(q3,vects))) + 
   4*Pair(Momentum(p2,vects),Momentum(q2,vects))*(2*Pair(Momentum(q2,vects),Momentum(q3,vects)) + Pair(Momentum(q3,vects),Momentum(q3,vects))) + 
   Pair(Momentum(p2,vects),Momentum(p2,vects))*(Pair(Momentum(p2,vects),Momentum(q3,vects)) - 

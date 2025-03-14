@@ -286,7 +286,7 @@ double kaonevent(params& p, event& e, nucleus& t)
 		case PDG::pdg_neutron:	// neutron -> proton
 			kaon.pdg = 311;
 
-			std::cout << "error\n";
+			//std::cout << "error\n";
 
 			// set form factors
     	TwoThreeScatter::singlekaon::ACT = 1; 
