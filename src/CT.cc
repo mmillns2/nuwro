@@ -5,6 +5,33 @@
 namespace TwoThreeScatter {
 namespace singlekaon {
 
+double EtaTest1(double ma, double m1, double m2, double m3, vect vects[6]){
+return  16*(m1*ma - Pair(Momentum(p1,vects),Momentum(q1,vects)))*(Pair(Momentum(p2,vects),Momentum(p2,vects))*
+      (Pair(Momentum(p2,vects),Momentum(q3,vects)) - 2*Pair(Momentum(q3,vects),Momentum(q3,vects))) + 
+     Pair(Momentum(p2,vects),Momentum(q3,vects))*Pair(Momentum(q3,vects),Momentum(q3,vects))) ;
+}
+
+double EtaTest2(double ma, double m1, double m2, double m3, vect vects[6]){
+return   -64*(m1*ma - Pair(Momentum(p1,vects),Momentum(q1,vects)))*(Pair(Momentum(p2,vects),Momentum(q3,vects))*Pair(Momentum(q2,vects),Momentum(q2,vects)) - 
+     2*Pair(Momentum(p2,vects),Momentum(q2,vects))*Pair(Momentum(q2,vects),Momentum(q3,vects)))  ;
+
+}
+
+
+double EtaTest3(double ma, double m1, double m2, double m3, vect vects[6]){
+return 32*(m1*ma - Pair(Momentum(p1,vects),Momentum(q1,vects)))*(Pair(Momentum(p2,vects),Momentum(p2,vects))*Pair(Momentum(q2,vects),Momentum(q3,vects)) - 
+     Pair(Momentum(p2,vects),Momentum(q2,vects))*Pair(Momentum(q3,vects),Momentum(q3,vects)))   ;
+}
+
+ 
+double EtaTest4(double ma, double m1, double m2, double m3, vect vects[6]){
+return  32*(m1*ma - Pair(Momentum(p1,vects),Momentum(q1,vects)))*(Pair(Momentum(p2,vects),Momentum(p2,vects))*Pair(Momentum(q2,vects),Momentum(q3,vects)) - 
+     Pair(Momentum(p2,vects),Momentum(q2,vects))*Pair(Momentum(q3,vects),Momentum(q3,vects)))  ;
+
+}
+
+
+
 
 double CT_(double ma, double m1, double m2, double m3, vect vects[6]) {
   return (64*Power(ACT,2)*Power(Vus,2)*Pair(Momentum(p1,vects),Momentum(q3,vects))*Pair(Momentum(p2,vects),Momentum(q1,vects)))/Power(fPi,2) + 

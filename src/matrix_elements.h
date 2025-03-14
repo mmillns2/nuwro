@@ -33,7 +33,10 @@ inline double AEta;
 // matrix elements
 double CT(double ma, double m1, double m2, double m3, double s, double W, double theta, double thetaStar, double phiStar);
 
-
+double EtaTest1(double ma, double m1, double m2, double m3, vect vects[6]);
+double EtaTest2(double ma, double m1, double m2, double m3, vect vects[6]);
+double EtaTest3(double ma, double m1, double m2, double m3, vect vects[6]);
+double EtaTest4(double ma, double m1, double m2, double m3, vect vects[6]);
 double CT(double ma, double m1, double m2, double m3, vect vects[6]);
 double CrossLambda(double ma, double m1, double m2, double m3, vect vects[6]);
 double CrossSigma(double ma, double m1, double m2, double m3, vect vects[6]);

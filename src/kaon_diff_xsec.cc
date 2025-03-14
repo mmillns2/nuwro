@@ -85,11 +85,23 @@ double single_kaon_sum_square_matrix_element(double ma, double m1, double m2, do
   double mat{ 0 };  // add all contributing matrix elements to mat
 
   //mat += TwoThreeScatter::singlekaon::CT(ma, m1, m2, m3, vects);
-  mat += TwoThreeScatter::singlekaon::CrossSigma(ma, m1, m2, m3, vects);
+  //mat += TwoThreeScatter::singlekaon::CrossSigma(ma, m1, m2, m3, vects);
   //mat += TwoThreeScatter::singlekaon::CrossLambda(ma, m1, m2, m3, vects);
   //mat += TwoThreeScatter::singlekaon::PionInFlight(ma, m1, m2, m3, vects);
   //mat += TwoThreeScatter::singlekaon::EtaInFlight(ma, m1, m2, m3, vects);
   //mat += TwoThreeScatter::singlekaon::KaonPole(ma, m1, m2, m3, vects);
+
+double p1 =  TwoThreeScatter::singlekaon::EtaTest1(ma, m1, m2, m3, vects);
+
+double p2 = TwoThreeScatter::singlekaon::EtaTest2(ma, m1, m2, m3, vects);
+
+double p3 = TwoThreeScatter::singlekaon::EtaTest3(ma, m1, m2, m3, vects);
+
+double p4 = TwoThreeScatter::singlekaon::EtaTest4(ma, m1, m2, m3, vects);
+ 
+if((p1+p2)<(p3+p4)){
+std::cout<< "failiure\n";
+} 
 
   return GF*GF * mat;
    
@@ -130,16 +142,16 @@ double single_kaon_diff_xsec_2(double s, double N1_mass, double kaon_mass, doubl
     vect q1_star{ N1_star };
     vect q2_star{ kaon_star };
 
-    q1_star.boost(-vcms);
-    q2_star.boost(-vcms);
+//    q1_star.boost(-vcms);
+  //  q2_star.boost(-vcms);
 
     diff_xsec += single_kaon_sum_square_matrix_element(N1_mass, N1_mass, kaon_mass, lepton_mass, vects);
   }
 
 	vect q{ vects[5] };
 	double Q2{ -q*q };
-	//double dipoleff{ ( 1/(1 + (Q2/1e6)) ) * ( 1/(1 + (Q2/1e6)) ) }; 
-	double dipoleff{ 1 }; 
+	double dipoleff{ ( 1/(1 + (Q2/1e6)) ) * ( 1/(1 + (Q2/1e6)) ) }; 
+	//double dipoleff{ 1 }; 
 
   double W{ std::sqrt(q12*q12) };
 
