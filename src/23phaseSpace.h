@@ -172,17 +172,17 @@ public:
 
 public:
   // create global instance of phase space
-	static std::vector<SingleKaonPhaseSpace>& get() {
-		static std::vector<SingleKaonPhaseSpace> instances;
-		instances.reserve(3);
-		return instances;
-	}
+	//static std::vector<SingleKaonPhaseSpace>& get() {
+	//	static std::vector<SingleKaonPhaseSpace> instances;
+	//	instances.reserve(3);
+	//	return instances;
+	//}
 
-  static void construct(double m3, double Ebeam) {	// must be in order of enum class
-    get().emplace_back(Channel::pp, m3, Ebeam);
-    get().emplace_back(Channel::np, m3, Ebeam);
-    get().emplace_back(Channel::nn, m3, Ebeam);
-  }
+  //static void construct(double m3, double Ebeam) {	// must be in order of enum class
+  //  get().emplace_back(Channel::pp, m3, Ebeam);
+  //  get().emplace_back(Channel::np, m3, Ebeam);
+  //  get().emplace_back(Channel::nn, m3, Ebeam);
+ // }
 
 public:
   // prevent copying
@@ -235,6 +235,73 @@ private:
 
 private:
   double matrixElement(double W, double theta, double thetaStar, double phiStar) const override;
+};
+
+
+class SingleKaonPP : public SingleKaonPhaseSpace {
+
+public:
+  // prevent copying
+  SingleKaonPP(const SingleKaonPP&) = delete;
+  SingleKaonPP& operator=(const SingleKaonPP&) = delete;
+  SingleKaonPP(SingleKaonPP&&) noexcept = default;
+  SingleKaonPP& operator=(SingleKaonPP&&) noexcept = default;
+  SingleKaonPP(double m3_, double Ebeam) : SingleKaonPhaseSpace{ Channel::pp, m3_, Ebeam } {}
+  ~SingleKaonPP() { }
+
+  static SingleKaonPP& construct(double m3_, double Ebeam) {
+    static SingleKaonPP instance{ m3_, Ebeam };
+    return instance;
+  }
+
+  //static SingleKaonPP& get() {
+  //  return construct(0.0, 0.0);
+  //}
+  
+};
+
+class SingleKaonNP : public SingleKaonPhaseSpace {
+
+public:
+  // prevent copying
+  SingleKaonNP(const SingleKaonNP&) = delete;
+  SingleKaonNP& operator=(const SingleKaonNP&) = delete;
+  SingleKaonNP(SingleKaonNP&&) noexcept = default;
+  SingleKaonNP& operator=(SingleKaonNP&&) noexcept = default;
+  SingleKaonNP(double m3_, double Ebeam) : SingleKaonPhaseSpace{ Channel::np, m3_, Ebeam } {}
+  ~SingleKaonNP() { }
+
+  static SingleKaonNP& construct(double m3_, double Ebeam) {
+    static SingleKaonNP instance{ m3_, Ebeam };
+    return instance;
+  }
+
+  //static SingleKaonNP& get() {
+  //  return construct(0.0, 0.0);
+  //}
+  
+};
+
+class SingleKaonNN : public SingleKaonPhaseSpace {
+
+public:
+  // prevent copying
+  SingleKaonNN(const SingleKaonNN&) = delete;
+  SingleKaonNN& operator=(const SingleKaonNN&) = delete;
+  SingleKaonNN(SingleKaonNN&&) noexcept = default;
+  SingleKaonNN& operator=(SingleKaonNN&&) noexcept = default;
+  SingleKaonNN(double m3_, double Ebeam) : SingleKaonPhaseSpace{ Channel::nn, m3_, Ebeam } {}
+  ~SingleKaonNN() { }
+
+  static SingleKaonNN& construct(double m3_, double Ebeam) {
+    static SingleKaonNN instance{ m3_, Ebeam };
+    return instance;
+  }
+
+  //static SingleKaonNN& get() {
+  //  return construct(0.0, 0.0);
+  //}
+  
 };
 
 }

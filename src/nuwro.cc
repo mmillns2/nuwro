@@ -36,6 +36,7 @@
 #include "lepevent.h"
 #include "output.h"
 #include "kaonevent.h"
+#include "23phaseSpace.h"
 
 
 extern double SPP[2][2][2][3][40];
@@ -153,6 +154,16 @@ void NuWro::init (int argc, char **argv)
 		cout << "     -> Calculating the single-pion functions..." << endl;
 		singlepion (p);
 	}
+	if(p.beam_test_only == 0 && p.kaskada_redo == 0 && p.dyn_kaon)
+	{
+		int nu_pdg{ p.beam_particle };
+		int lepton_pdg{ nu_pdg - (nu_pdg > 0 ? 1 : -1) };
+		double m3{ PDG::mass(lepton_pdg) };
+		double Ebeam{ std::stod(p.beam_energy) }; 							
+		phase23::singlek::SingleKaonPP::construct(m3, Ebeam);	
+		phase23::singlek::SingleKaonNP::construct(m3, Ebeam);	
+		phase23::singlek::SingleKaonNN::construct(m3, Ebeam);	
+	}
 	if(p.kaskada_redo==0)
 	{
 		cout << "     -> Building the target nuclei..." << endl;
@@ -267,6 +278,8 @@ void NuWro::makeevent(event* e, params &p)
 	e->flag.mec = false;
 	e->flag.hyp = false;
 	e->flag.lep = false;
+	
+	e->flag.kaon = false;
 	
 	e->flag.anty = nu.pdg<0;
 

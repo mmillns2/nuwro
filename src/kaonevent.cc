@@ -21,9 +21,131 @@
 #include "kaon_diff_xsec.h"
 #include "23Scatter.h"
 #include "matrix_elements.h"
+#include "23phaseSpace.h"
 
 #define LOCALKF localkf_O
 
+
+double kaonevent(params& p, event& e, nucleus& t)
+{
+  /*
+
+  add some description here
+
+  */
+
+  // flags
+  e.flag.kaon = true;
+  e.weight = 0;
+
+	// disable for anti neutrinos for now
+	if(e.in[0].pdg < 0) return 0;
+
+  // particles
+  particle nu = e.in[0];  // initial antineutrino
+  particle N0 = e.in[1];  // initial nucleon
+  particle lepton;        // outgoing antilepton
+  particle kaon;          // created kaon
+  particle N1;            // outgoing nucleon
+
+  // same coordinates for initial/final particles
+  lepton.r = N0.r;
+  kaon.r = N0.r;
+  N1.r = N0.r;
+
+  // adjust the lepton flavour
+  lepton.pdg = nu.pdg - (nu.pdg > 0 ? 1 : -1);
+  lepton.set_mass(PDG::mass(lepton.pdg));
+
+	double E_bind{ };
+	if(t.p + t.n > 1) {
+		switch(p.nucleus_target) {
+		case 0: E_bind = 0; break;
+		case 1: E_bind = p.nucleus_E_b; break;
+		case 2: E_bind = t.Ef(N0) + p.kaskada_w; break;
+		case 3: E_bind = bodek_binding_energy(N0, t.p, t.n); break;
+		case 4: E_bind = binen(N0.p(), p.nucleus_p, p.nucleus_n); break;
+		case 5: E_bind = deuter_binen(N0.p()); break;
+		case 6: E_bind = p.nucleus_E_b; break;
+		default: E_bind = 0;
+		}
+	}
+
+	particle N0_Eb{ N0 }; // nucleon with 4-mom adjusted for binding energy
+	N0_Eb.t -= E_bind;
+
+	vect p1_v{ N0_Eb };
+	vect p2_v{ nu };
+
+	vec vcms{ (p1_v + p2_v).v() };
+	vec vlab{ p1_v.v() };
+
+	p2_v.boost(-vlab);	// boost to fixed target frame
+	double E_beam{ p2_v.t };
+
+	std::cout << E_beam << '\n'; 
+
+	p1_v.boost(-vcms);	// boost to CMS frame
+
+	vect q1_v{ };	// outgoing nucleon
+	vect q2_v{ };	// kaon
+	vect q3_v{ };	// lepton
+
+	double xsec{  };
+
+	// assume first a proton is produced
+	N1.pdg = 2212;
+	N1.set_mass(PDG::mass(N1.pdg));
+
+	switch(N0.pdg) {
+		case PDG::pdg_proton:		// proton -> proton
+			kaon.pdg = 321;
+			xsec = phase23::singlek::SingleKaonPP::construct(0.0,0.0).xsec(p1_v, q1_v, q2_v, q3_v);
+			break;
+
+		case PDG::pdg_neutron:	// neutron -> proton
+			kaon.pdg = 311;
+			xsec = phase23::singlek::SingleKaonNP::construct(0.0,0.0).xsec(p1_v, q1_v, q2_v, q3_v);
+			break;
+
+		default:
+			return 0;
+	}
+	
+	kaon.set_mass(PDG::mass(kaon.pdg));
+
+ 	// update particle 4-momentum
+	N1.p4() = q1_v;
+	kaon.p4() = q2_v;
+	lepton.p4() = q3_v;
+
+	if(N0.pdg == PDG::pdg_neutron) {	// neutron -> neutron
+
+		double xsec2{ phase23::singlek::SingleKaonNN::construct(0.0,0.0).xsec(p1_v, q1_v, q2_v, q3_v) };
+		
+		if(frandom() < xsec2/(xsec + xsec2)) {
+			N1.p4() = q1_v;
+			kaon.p4() = q2_v;
+			lepton.p4() = q3_v;
+		}
+
+		// cross sections sum up
+		xsec += xsec2;
+	}
+
+  e.temp.push_back(lepton);
+  e.temp.push_back(kaon);
+  e.temp.push_back(N1);
+  e.out.push_back(lepton);
+  e.out.push_back(kaon);
+  e.out.push_back(N1);
+
+  e.weight = xsec / cm2;
+
+  return e.weight * cm2;
+
+//	return 0;
+}
 
 double kaonevent2(params& p, event& e, nucleus& t)
 {
@@ -232,7 +354,7 @@ double kaonevent2(params& p, event& e, nucleus& t)
 }
 
 
-double kaonevent(params& p, event& e, nucleus& t)
+double kaonevent3(params& p, event& e, nucleus& t)
 {
   /*
 
@@ -348,7 +470,17 @@ double kaonevent(params& p, event& e, nucleus& t)
 
   // differential cross section
   vect cms_vects[6] = { p1, p2, q1, q2, q3, q };
+	std::cout << "Before xsec calc\n";
+	for(int i{ 0 }; i < 6; ++i) {
+		std::cout << i << ": " << cms_vects[i] << '\n';
+	}
   double xsec = single_kaon_diff_xsec_2(s, Nuc1_mass, Kaon_mass, Lepton_mass, cms_vects);
+
+	std::cout << "After xsec calc\n";
+	for(int i{ 0 }; i < 6; ++i) {
+		std::cout << i << ": " << cms_vects[i] << '\n';
+	}
+
 
 /*
   if(N0_Eb.pdg == 2112) {    // neutron -> neutron
