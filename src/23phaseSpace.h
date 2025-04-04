@@ -59,18 +59,11 @@ static int HISTID{ 1000 };
 class TwoThreePhaseSpace {
 
 protected:
-  virtual double matrixElement(double W, double theta, double thetaStar, double phiStar) const = 0;
+  virtual double matrixElement(double s, double W, double theta, double thetaStar, double phiStar) const = 0;
   
 public:
-  // create global instance of phase space
-  //static TwoThreePhaseSpace& construct(double ma, double m1, double m2, double m3, double Ebeam) {
-  //  static TwoThreePhaseSpace instance{ ma, m1, m2, m3, Ebeam };
-  //  return instance; 
-  //}
-
-public:
-  std::shared_ptr<TH3D> getHistogram(double theta) const { return m_phaseSpace[getThetaIndex(theta)]; }
-  double xsec(vect p1_v, vect& q1_v, vect& q2_v, vect& q3_v);
+  std::shared_ptr<TH3D> getHistogram(double Ebeam, double theta) const { return m_phaseSpace[getEbeamIndex(Ebeam)][getThetaIndex(theta)]; }
+  double xsec(double Ebeam, vect p1_v, vect& q1_v, vect& q2_v, vect& q3_v);
   double kallen(double x, double y, double z) const;
 
 public:
@@ -81,7 +74,7 @@ public:
   TwoThreePhaseSpace& operator=(TwoThreePhaseSpace&&) noexcept = default;
 
 protected:
-  TwoThreePhaseSpace(double ma_, double m1_, double m2_, double m3_, double Ebeam);
+  TwoThreePhaseSpace(double ma_, double m1_, double m2_, double m3_, double EbeamMin_, double EbeamMax_);
 
 public:
   virtual ~TwoThreePhaseSpace() { }
@@ -89,17 +82,19 @@ public:
 protected:
   void xsecPrecompute();
   int getThetaIndex(double theta) const;
+  int getEbeamIndex(double Ebeam) const;
   double sCalc(double ma_, double Ebeam) const;
-  double dipoleffCalc(double W, double theta, double thetaStar, double phiStar) const;
-  double xsecCalc(double W, double theta, double thetaStar, double phiStar) const;
+  double dipoleffCalc(double s, double W, double theta, double thetaStar, double phiStar) const;
+  double xsecCalc(double s, double W, double theta, double thetaStar, double phiStar) const;
 
 protected:
-  std::vector<std::shared_ptr<TH3D>> m_phaseSpace;
+  std::vector<std::vector<std::shared_ptr<TH3D>>> m_phaseSpace;
 
   static constexpr int ntheta{ 12 };
   static constexpr int nthetaStar{ 12 };
   static constexpr int nphiStar{ 12 };
   static constexpr int nW{ 12 };
+  static constexpr int nEbeam{ 10 };
 
   static constexpr double thetaMin{ 0.0 };
   static constexpr double thetaMax{ 3.14159 };
@@ -108,25 +103,24 @@ protected:
   static constexpr double phiStarMin{ 0.0 };
   static constexpr double phiStarMax{ 2*3.14159 };
 
-  double WMin;    // need logic to determine these
-  double WMax;
+	double EbeamMin;
+	double EbeamMax;
 
   double ma;
   double m1;
   double m2;
   double m3;
-  double s;
 
 private:
   // 4-momentum components
-  double Ep1() const;
-  double Ep2() const; 
-  double E3(double W) const; 
-  double q3mod(double W) const;
+  double Ep1(double s) const;
+  double Ep2(double s) const; 
+  double E3(double s, double W) const; 
+  double q3mod(double s, double W) const;
   double q12CM(double W) const;
-  double E12(double W) const;
-  double gamma(double W) const; 
-  double beta(double W) const; 
+  double E12(double s, double W) const;
+  double gamma(double s, double W) const; 
+  double beta(double s, double W) const; 
   double q10Star(double W) const;
   double q20Star(double W) const;
   double q11Star(double W, double thetaStar, double phiStar) const;
@@ -135,18 +129,18 @@ private:
   double q22Star(double W, double thetaStar, double phiStar) const;
   double q13Star(double W, double thetaStar) const;
   double q23Star(double W, double thetaStar) const;
-  double q10(double W, double thetaStar) const;
-  double q20(double W, double thetaStar) const;
-  double q11(double W, double theta, double thetaStar, double phiStar) const;
-  double q21(double W, double theta, double thetaStar, double phiStar) const;
+  double q10(double s, double W, double thetaStar) const;
+  double q20(double s, double W, double thetaStar) const;
+  double q11(double s, double W, double theta, double thetaStar, double phiStar) const;
+  double q21(double s, double W, double theta, double thetaStar, double phiStar) const;
   double q12(double W, double thetaStar, double phiStar) const; 
   double q22(double W, double thetaStar, double phiStar) const;
-  double q13(double W, double theta, double thetaStar, double phiStar) const;
-  double q23(double W, double theta, double thetaStar, double phiStar) const;
+  double q13(double s, double W, double theta, double thetaStar, double phiStar) const;
+  double q23(double s, double W, double theta, double thetaStar, double phiStar) const;
 
 protected:
   // mathematica wrapper functions
-  vect Momentum(Four_mom_type k, double W, double theta, double thetaStar, double phiStar) const;
+  vect Momentum(double s, Four_mom_type k, double W, double theta, double thetaStar, double phiStar) const;
   double Pair(vect k1, vect k2) const;
   double Power(double x, int n) const;
   double Power(vect x, int n) const;
@@ -171,26 +165,12 @@ public:
   };
 
 public:
-  // create global instance of phase space
-	//static std::vector<SingleKaonPhaseSpace>& get() {
-	//	static std::vector<SingleKaonPhaseSpace> instances;
-	//	instances.reserve(3);
-	//	return instances;
-	//}
-
-  //static void construct(double m3, double Ebeam) {	// must be in order of enum class
-  //  get().emplace_back(Channel::pp, m3, Ebeam);
-  //  get().emplace_back(Channel::np, m3, Ebeam);
-  //  get().emplace_back(Channel::nn, m3, Ebeam);
- // }
-
-public:
   // prevent copying
   SingleKaonPhaseSpace(const SingleKaonPhaseSpace&) = delete;
   SingleKaonPhaseSpace& operator=(const SingleKaonPhaseSpace&) = delete;
   SingleKaonPhaseSpace(SingleKaonPhaseSpace&&) noexcept = default;
   SingleKaonPhaseSpace& operator=(SingleKaonPhaseSpace&&) noexcept = default;
-  SingleKaonPhaseSpace(Channel channel, double m3_, double Ebeam);
+  SingleKaonPhaseSpace(Channel channel, double m3_, double EbeamMin_, double EbeamMax_);
   ~SingleKaonPhaseSpace() { }
 
 private:
@@ -226,15 +206,15 @@ private:
 
 private:
   // matrix elements
-  double CT(double W, double theta, double thetaStar, double phiStar) const;
-  double CrossLambda(double W, double theta, double thetaStar, double phiStar) const;
-  double CrossSigma(double W, double theta, double thetaStar, double phiStar) const;
-  double PionInFlight(double W, double theta, double thetaStar, double phiStar) const;
-  double EtaInFlight(double W, double theta, double thetaStar, double phiStar) const;
-  double KaonPole(double W, double theta, double thetaStar, double phiStar) const;
+  double CT(double s, double W, double theta, double thetaStar, double phiStar) const;
+  double CrossLambda(double s, double W, double theta, double thetaStar, double phiStar) const;
+  double CrossSigma(double s, double W, double theta, double thetaStar, double phiStar) const;
+  double PionInFlight(double s, double W, double theta, double thetaStar, double phiStar) const;
+  double EtaInFlight(double s, double W, double theta, double thetaStar, double phiStar) const;
+  double KaonPole(double s, double W, double theta, double thetaStar, double phiStar) const;
 
 private:
-  double matrixElement(double W, double theta, double thetaStar, double phiStar) const override;
+  double matrixElement(double s, double W, double theta, double thetaStar, double phiStar) const override;
 };
 
 
@@ -246,17 +226,17 @@ public:
   SingleKaonPP& operator=(const SingleKaonPP&) = delete;
   SingleKaonPP(SingleKaonPP&&) noexcept = default;
   SingleKaonPP& operator=(SingleKaonPP&&) noexcept = default;
-  SingleKaonPP(double m3_, double Ebeam) : SingleKaonPhaseSpace{ Channel::pp, m3_, Ebeam } {}
+  SingleKaonPP(double m3_, double EbeamMin_, double EbeamMax_) : SingleKaonPhaseSpace{ Channel::pp, m3_, EbeamMin_, EbeamMax_ } {}
   ~SingleKaonPP() { }
 
-  static SingleKaonPP& construct(double m3_, double Ebeam) {
-    static SingleKaonPP instance{ m3_, Ebeam };
+  static SingleKaonPP& construct(double m3_, double EbeamMin_, double EbeamMax_) {
+    static SingleKaonPP instance{ m3_, EbeamMin_, EbeamMax_ };
     return instance;
   }
 
-  //static SingleKaonPP& get() {
-  //  return construct(0.0, 0.0);
-  //}
+  static SingleKaonPP& get() {
+    return construct(0.0, 0.0, 0.0);
+  }
   
 };
 
@@ -268,17 +248,17 @@ public:
   SingleKaonNP& operator=(const SingleKaonNP&) = delete;
   SingleKaonNP(SingleKaonNP&&) noexcept = default;
   SingleKaonNP& operator=(SingleKaonNP&&) noexcept = default;
-  SingleKaonNP(double m3_, double Ebeam) : SingleKaonPhaseSpace{ Channel::np, m3_, Ebeam } {}
+  SingleKaonNP(double m3_, double EbeamMin_, double EbeamMax_) : SingleKaonPhaseSpace{ Channel::np, m3_, EbeamMin_, EbeamMax_ } {}
   ~SingleKaonNP() { }
 
-  static SingleKaonNP& construct(double m3_, double Ebeam) {
-    static SingleKaonNP instance{ m3_, Ebeam };
+  static SingleKaonNP& construct(double m3_, double EbeamMin_, double EbeamMax_) {
+    static SingleKaonNP instance{ m3_, EbeamMin_, EbeamMax_ };
     return instance;
   }
 
-  //static SingleKaonNP& get() {
-  //  return construct(0.0, 0.0);
-  //}
+  static SingleKaonNP& get() {
+    return construct(0.0, 0.0, 0.0);
+  }
   
 };
 
@@ -290,17 +270,17 @@ public:
   SingleKaonNN& operator=(const SingleKaonNN&) = delete;
   SingleKaonNN(SingleKaonNN&&) noexcept = default;
   SingleKaonNN& operator=(SingleKaonNN&&) noexcept = default;
-  SingleKaonNN(double m3_, double Ebeam) : SingleKaonPhaseSpace{ Channel::nn, m3_, Ebeam } {}
+  SingleKaonNN(double m3_, double EbeamMin_, double EbeamMax_) : SingleKaonPhaseSpace{ Channel::nn, m3_, EbeamMin_, EbeamMax_ } {}
   ~SingleKaonNN() { }
 
-  static SingleKaonNN& construct(double m3_, double Ebeam) {
-    static SingleKaonNN instance{ m3_, Ebeam };
+  static SingleKaonNN& construct(double m3_, double EbeamMin_, double EbeamMax_) {
+    static SingleKaonNN instance{ m3_, EbeamMin_, EbeamMax_ };
     return instance;
   }
 
-  //static SingleKaonNN& get() {
-  //  return construct(0.0, 0.0);
-  //}
+  static SingleKaonNN& get() {
+    return construct(0.0, 0.0, 0.0);
+  }
   
 };
 

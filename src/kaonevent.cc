@@ -83,7 +83,7 @@ double kaonevent(params& p, event& e, nucleus& t)
 	p2_v.boost(-vlab);	// boost to fixed target frame
 	double E_beam{ p2_v.t };
 
-	std::cout << E_beam << '\n'; 
+	//std::cout << E_beam << '\n'; 
 
 	p1_v.boost(-vcms);	// boost to CMS frame
 
@@ -100,12 +100,12 @@ double kaonevent(params& p, event& e, nucleus& t)
 	switch(N0.pdg) {
 		case PDG::pdg_proton:		// proton -> proton
 			kaon.pdg = 321;
-			xsec = phase23::singlek::SingleKaonPP::construct(0.0,0.0).xsec(p1_v, q1_v, q2_v, q3_v);
+			xsec = phase23::singlek::SingleKaonPP::get().xsec(E_beam, p1_v, q1_v, q2_v, q3_v);
 			break;
 
 		case PDG::pdg_neutron:	// neutron -> proton
 			kaon.pdg = 311;
-			xsec = phase23::singlek::SingleKaonNP::construct(0.0,0.0).xsec(p1_v, q1_v, q2_v, q3_v);
+			xsec = phase23::singlek::SingleKaonNP::get().xsec(E_beam, p1_v, q1_v, q2_v, q3_v);
 			break;
 
 		default:
@@ -121,7 +121,7 @@ double kaonevent(params& p, event& e, nucleus& t)
 
 	if(N0.pdg == PDG::pdg_neutron) {	// neutron -> neutron
 
-		double xsec2{ phase23::singlek::SingleKaonNN::construct(0.0,0.0).xsec(p1_v, q1_v, q2_v, q3_v) };
+		double xsec2{ phase23::singlek::SingleKaonNN::get().xsec(E_beam, p1_v, q1_v, q2_v, q3_v) };
 		
 		if(frandom() < xsec2/(xsec + xsec2)) {
 			N1.p4() = q1_v;
