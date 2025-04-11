@@ -6,11 +6,11 @@
 
 # The number of events used to calculate the cross sections: 
 
-number_of_test_events = 2000000
+number_of_test_events = 2000
 
 # The number of equally weighted events to be saved:
 
-number_of_events      = 500000
+number_of_events      = 1000
  
 # Control the random seed persistence:
 random_seed  = 0     // 0 - use time(NULL) as a seed for random number generator
@@ -29,8 +29,8 @@ random_seed  = 0     // 0 - use time(NULL) as a seed for random number generator
 # Define the beam by hand:
 # (single flavor, monoenergetic [MeV], lepton PDG)
 beam_type     = 0
-beam_energy   = 1000
-beam_particle = 14
+beam_energy   = 2000
+beam_particle = -14
 
 # It is convenient to include one of the predefined beam specifications
 # with the @ char (or modify them as needed):
@@ -48,8 +48,8 @@ beam_particle = 14
 # *default* predefined LFG Carbon target "C.txt"
 
 # Define the nucleus by hand:
-#nucleus_p = 6
-#nucleus_n = 6
+nucleus_p = 6
+nucleus_n = 6
 
 # Models for the description of nucleus as a target:
 #nucleus_target = 0 // free target
@@ -65,11 +65,11 @@ beam_particle = 14
 #nucleus_kf     = 220 // [MeV] Fermi momentum, used in Fermi gas model
 
 # Enable Pauli blocking:
-pauli_blocking   = 1 // enable (1) or not (0) Pauli blocking
+pauli_blocking   = 0 // enable (1) or not (0) Pauli blocking
 
 # It is convenient to include one of the predefined target specifications
 # with the @ char (or modify them as needed):
-@target/C.txt
+#@target/C.txt
 #@target/CH.txt
 #@target/ND280_975.txt
 #@target/proton.txt
@@ -82,19 +82,19 @@ pauli_blocking   = 1 // enable (1) or not (0) Pauli blocking
 #
 ################################################################################
 
-dyn_qel_cc =1      // Quasi elastic charged current
+dyn_qel_cc =0      // Quasi elastic charged current
 dyn_qel_nc =0      // Quasi elastic neutral current
-dyn_res_cc =1      // Resonant charged current
+dyn_res_cc =0      // Resonant charged current
 dyn_res_nc =0      // Resonant neutral current
-dyn_dis_cc =1      // Deep inelastic charged current
+dyn_dis_cc =0      // Deep inelastic charged current
 dyn_dis_nc =0      // Deep inelastic neutral current
-dyn_coh_cc =1      // Coherent charged current
+dyn_coh_cc =0      // Coherent charged current
 dyn_coh_nc =0      // Coherent neutral current
-dyn_mec_cc =1      // Meson exchange charged current
+dyn_mec_cc =0      // Meson exchange charged current
 dyn_mec_nc =0      // Meson exchange neutral current
-dyn_hyp_cc =1      // Quasi elastic hyperon production
-dyn_kaon =1        // Quasi elastic kaon production
-dyn_lep    =1      // Neutrino-electron
+dyn_hyp_cc =0      // Quasi elastic hyperon production
+dyn_kaon   =1      // Quasi elastic kaon production
+dyn_lep    =0      // Neutrino-electron
 # Standard output of total sigma [cm^2 / nucleon]
 
 dyn_qel_el =0      // (Quasi) elastic electron scattering
@@ -166,9 +166,9 @@ sf_method  = 0 // don't use spectral function
 #sf_method = 1 // use grid spectral function: (C12, O16, Ar40, Fe56)
 #sf_method = 2 // use factorized spectral function: (O16, Ar40, Ca40)
 
-sf_fsi     = 1 // FSI correction for SF (0 - disabled, 1 - enabled)
-sf_coulomb = 1 // Coulomb correction for SF (0 - disabled, 1 - enabled)
-sf_pb      = 1 // Pauli blocking method used for SF:
+sf_fsi     = 0 // FSI correction for SF (0 - disabled, 1 - enabled)
+sf_coulomb = 0 // Coulomb correction for SF (0 - disabled, 1 - enabled)
+sf_pb      = 0 // Pauli blocking method used for SF:
 #                 (0) average Fermi momentum, (1) local Fermi momentum,
 #                 (2) nucleon momentum distribution given by spectral function
 
@@ -298,13 +298,53 @@ hyp_g2_Im_part       = 0 // Imaginary part second class current
 hyp_su3_sym_breaking = 0 // SU(3) symmetry breaking
 
 ################################################################################
+#   KAON
+################################################################################
+
+# The model of single kaon production in neutrino interactions
+# -> see ....
+
+# enable particular single kaon channels:
+kaon_Kplus							 = 1
+kaon_Kminus              = 1
+kaon_Kzero               = 1
+kaon_KzeroBar            = 1
+
+# Enable particular contributions to the kaon matrix element:
+kaon_CT                  = 0
+kaon_CRSigma					   = 0
+kaon_CRLambda            = 0
+kaon_KaonPole            = 0
+kaon_PionInFlight        = 0
+kaon_EtaInFlight         = 0
+kaon_CT_anti             = 0
+kaon_Sigma_anti          = 0
+kaon_SigmaStar_anti      = 0
+kaon_Lambda_anti         = 0
+kaon_KaonPole_anti       = 0
+kaon_PionInFlight_anti   = 0
+kaon_EtaInFlight_anti    = 1
+
+# dipole form factor
+kaon_dipoleff            = 1
+kaon_MF                  = 1000	// MF used in formula (MeV)
+
+# bin settings for pre-computing phase space:
+kaon_fullBeam            = 0	  // uses full beam distribution (not uniform spacing)
+kaon_beam_bins           = 5
+kaon_W_bins              = 5
+kaon_theta_bins          = 5
+kaon_thetaStar_bins      = 5
+kaon_phiStar_bins        = 5
+
+################################################################################
 #
 # Final state interaction parameters
 #
 ################################################################################
 
 # Turn on the cascade:
-kaskada_on       = 1  // use (1) or not (0) the cascade 
+kaskada_on       = 0  // use (1) or not (0) the cascade 
 
 # Models for the description of nucleus in the cascade:
 #nucleus_model   = 0  // "flatnucleus" ball with constant density

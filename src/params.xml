@@ -478,8 +478,80 @@
   <param name="hyp_Sigma_Eb" type="text" ctype="double" default="-70">
     <description>Sigma binding energy at max density; [10 MeV; -150 MeV]</description>
   </param>
-  <param name="kaon_effmass" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
-    <description>Use kaon effective mass in cross section</description>
+  <param name="kaon_Kplus" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable K+ channels</description>
+  </param>
+	<param name="kaon_Kminus" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable K- channels</description>
+  </param>
+	<param name="kaon_Kzero" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable K0 channels</description>
+  </param>
+	<param name="kaon_KzeroBar" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable anti K0 channels</description>
+  </param>
+	<param name="kaon_CT" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable Contact term contribution to the matrix element</description>
+  </param>
+	<param name="kaon_CRSigma" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable CRSigma contribution to the matrix element</description>
+  </param>
+	<param name="kaon_CRLambda" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable CRLambda contribution to the matrix element</description>
+  </param>
+	<param name="kaon_KaonPole" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable Kaon pole contribution to the matrix element</description>
+  </param>
+	<param name="kaon_PionInFlight" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable Pion in flight contribution to the matrix element</description>
+  </param>
+	<param name="kaon_EtaInFlight" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable Eta in flight contribution to the matrix element</description>
+  </param>
+	<param name="kaon_CT_anti" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable Contact term contribution to the (anti neutrino)  matrix element</description>
+  </param>
+	<param name="kaon_Sigma_anti" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable Sigma contribution to the (anti neutrino) matrix element</description>
+  </param>
+	<param name="kaon_SigmaStar_anti" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable Sigma* contribution to the (anti neutrino)  matrix element</description>
+  </param>
+	<param name="kaon_Lambda_anti" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable Lambda contribution to the (anti neutrino) matrix element</description>
+  </param>
+	<param name="kaon_KaonPole_anti" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable Kaon pole contribution to the (anti neutrino) matrix element</description>
+  </param>
+	<param name="kaon_PionInFlight_anti" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable Pion in flight contribution to the (anti neutrino) matrix element</description>
+  </param>
+	<param name="kaon_EtaInFlight_anti" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Enable Eta in flight contribution to the (anti neutrino) matrix element</description>
+  </param>
+	<param name="kaon_dipoleff" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Toggle dipole form factor</description>
+  </param>
+	<param name="kaon_MF" type="checkbox" ctype="double" default="1000">   <!--Kaon production checkpoint-->
+    <description>Set MF value in dipole form factor formula (MeV)</description>
+  </param>
+	<param name="kaon_fullBeam" type="checkbox" ctype="bool" default="true">   <!--Kaon production checkpoint-->
+    <description>Use full beam energy distribution rather than uniform spacing</description>
+  </param>
+	<param name="kaon_beam_bins" type="checkbox" ctype="int" default="10">   <!--Kaon production checkpoint-->
+    <description>Set number of beam energy bins used to pre-compute the phase space</description>
+  </param>
+	<param name="kaon_W_bins" type="checkbox" ctype="int" default="10">   <!--Kaon production checkpoint-->
+    <description>Set number of W (hadronic invariant mass) bins used to pre-compute the phase space</description>
+  </param>
+	<param name="kaon_theta_bins" type="checkbox" ctype="int" default="10">   <!--Kaon production checkpoint-->
+    <description>Set number of theta (direction of lepton in CMS frame) bins used to pre-compute the phase space</description>
+  </param>
+	<param name="kaon_thetaStar_bins" type="checkbox" ctype="int" default="10">   <!--Kaon production checkpoint-->
+    <description>Set number of theta* (rest frame of hadronic pair) bins used to pre-compute the phase space</description>
+  </param>
+	<param name="kaon_phiStar_bins" type="checkbox" ctype="int" default="10">   <!--Kaon production checkpoint-->
+    <description>Set number of phi* (rest frame of hadronic pair) bins used to pre-compute the phase space</description>
   </param>
   <param name="kaskada_on" type="checkbox" ctype="bool" default="1">
     <description><![CDATA[use (1) or not (0) the cascade]]></description>

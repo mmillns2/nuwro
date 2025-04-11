@@ -13,6 +13,9 @@
 #include "TH3D.h"
 
 
+#include "params.h"
+
+
 namespace phase23 {
 
 enum Four_mom_type { 
@@ -60,6 +63,16 @@ class TwoThreePhaseSpace {
 
 protected:
   virtual double matrixElement(double s, double W, double theta, double thetaStar, double phiStar) const = 0;
+
+public:
+	inline static int currentProgress{ 0 };
+	inline static int totalWork{ 0 };
+	inline static void printProgress() {
+		double percentage{ totalWork == 0 ? 0 : static_cast<double>(currentProgress) / totalWork * 100 };
+		double rounded = std::round(percentage * 10.0) / 10.0;
+		printf("\r        %.1f%% of kaon phase space ready...", rounded);
+		std::fflush(stdout);
+	}
   
 public:
   std::shared_ptr<TH3D> getHistogram(double Ebeam, double theta) const { return m_phaseSpace[getEbeamIndex(Ebeam)][getThetaIndex(theta)]; }
@@ -74,7 +87,8 @@ public:
   TwoThreePhaseSpace& operator=(TwoThreePhaseSpace&&) noexcept = default;
 
 protected:
-  TwoThreePhaseSpace(double ma_, double m1_, double m2_, double m3_, double EbeamMin_, double EbeamMax_);
+  //TwoThreePhaseSpace(int ntheta_, int nthetaStar_, int nphiStar_, int nW_, int nEbeam_, double ma_, double m1_, double m2_, double m3_, double EbeamMin_, double EbeamMax_);
+  TwoThreePhaseSpace(int ntheta_, int nthetaStar_, int nphiStar_, int nW_, int nEbeam_, double ma_, double m1_, double m2_, double m3_, const std::vector<double>& beam_, bool dipoleff, double MF, bool fullBeam_);
 
 public:
   virtual ~TwoThreePhaseSpace() { }
@@ -90,11 +104,11 @@ protected:
 protected:
   std::vector<std::vector<std::shared_ptr<TH3D>>> m_phaseSpace;
 
-  static constexpr int ntheta{ 12 };
-  static constexpr int nthetaStar{ 12 };
-  static constexpr int nphiStar{ 12 };
-  static constexpr int nW{ 12 };
-  static constexpr int nEbeam{ 10 };
+  int ntheta{ 12 };
+  int nthetaStar{ 12 };
+  int nphiStar{ 12 };
+  int nW{ 12 };
+  int nEbeam{ 10 };
 
   static constexpr double thetaMin{ 0.0 };
   static constexpr double thetaMax{ 3.14159 };
@@ -105,11 +119,16 @@ protected:
 
 	double EbeamMin;
 	double EbeamMax;
+  std::vector<double> beam;
+  bool fullBeam{ false };
 
   double ma;
   double m1;
   double m2;
   double m3;
+
+  bool m_dipoleff;
+  double m_MF;
 
 private:
   // 4-momentum components
@@ -145,6 +164,7 @@ protected:
   double Power(double x, int n) const;
   double Power(vect x, int n) const;
   double Eps(vect k1, vect k2, vect k3, vect k4) const;
+	double Complex(double,double) const { return 0; }
 
 protected:
   // 4D Levi-Civita functionality
@@ -158,22 +178,20 @@ namespace singlek {
 class SingleKaonPhaseSpace : public TwoThreePhaseSpace {
   
 public:
-  enum class Channel {
-    pp,
-    np,
-    nn,
-  };
-
-public:
   // prevent copying
   SingleKaonPhaseSpace(const SingleKaonPhaseSpace&) = delete;
   SingleKaonPhaseSpace& operator=(const SingleKaonPhaseSpace&) = delete;
   SingleKaonPhaseSpace(SingleKaonPhaseSpace&&) noexcept = default;
   SingleKaonPhaseSpace& operator=(SingleKaonPhaseSpace&&) noexcept = default;
-  SingleKaonPhaseSpace(Channel channel, double m3_, double EbeamMin_, double EbeamMax_);
-  ~SingleKaonPhaseSpace() { }
 
-private:
+protected:
+  SingleKaonPhaseSpace(params& p_, double ma_, double m1_, double m2_, double ACT_, double BCT_, double ASigma_, double ALambda_, double AKP, double APi, double AEta);
+  SingleKaonPhaseSpace(params& p_, const std::array<double,10>& mvariables);
+
+public:
+  virtual ~SingleKaonPhaseSpace() { }
+
+protected:
   // constants
   static constexpr double GF{ 1.16639e-11 };
   static constexpr double D{ 0.804 };
@@ -191,18 +209,44 @@ private:
   static constexpr double mKaon0{ 497.648 };
   static constexpr double mKaonCharged{ 493.677 };
 
-private:
+protected:
   // members
-  Channel m_channel;
+  params& p;
 
   // form factors
   double ACT;
   double BCT;
-  double ACRSigma;
-  double ACRLambda;
+  double ASigma;
+  double ALambda;
   double AKP;
   double APi;
   double AEta;
+
+protected:
+  double matrixElement(double s, double W, double theta, double thetaStar, double phiStar) const = 0;
+};
+
+class SKChannels : public SingleKaonPhaseSpace {
+   
+public:
+  enum class Channel {
+    pp,
+    np,
+    nn,
+  };
+
+public:
+  // prevent copying
+  SKChannels(const SKChannels&) = delete;
+  SKChannels& operator=(const SKChannels&) = delete;
+  SKChannels(SKChannels&&) noexcept = default;
+  SKChannels& operator=(SKChannels&&) noexcept = default;
+  SKChannels(params& p, Channel channel);
+  ~SKChannels() { }
+
+private:
+  // members
+  Channel m_channel;
 
 private:
   // matrix elements
@@ -217,72 +261,206 @@ private:
   double matrixElement(double s, double W, double theta, double thetaStar, double phiStar) const override;
 };
 
+class SKAntiChannels : public SingleKaonPhaseSpace {
 
-class SingleKaonPP : public SingleKaonPhaseSpace {
+public:
+  enum class Channel {
+    pn,
+    pp,
+    nn,
+  };
 
+private:
+  // constants
+  static constexpr double mSigmaStar{ 1383 }; 
+
+public:
+  // prevent copying
+  SKAntiChannels(const SKAntiChannels&) = delete;
+  SKAntiChannels& operator=(const SKAntiChannels&) = delete;
+  SKAntiChannels(SKAntiChannels&&) noexcept = default;
+  SKAntiChannels& operator=(SKAntiChannels&&) noexcept = default;
+  SKAntiChannels(params& p, Channel channel);
+  ~SKAntiChannels() { }
+
+private:
+  // members
+  Channel m_channel;
+  double ASigmaStar;
+
+private:
+  // matrix elements
+  double CT(double s, double W, double theta, double thetaStar, double phiStar) const;
+  double Lambda(double s, double W, double theta, double thetaStar, double phiStar) const;
+  double Sigma(double s, double W, double theta, double thetaStar, double phiStar) const;
+  double SigmaStar(double s, double W, double theta, double thetaStar, double phiStar) const;
+  double PionInFlight(double s, double W, double theta, double thetaStar, double phiStar) const;
+  double EtaInFlight(double s, double W, double theta, double thetaStar, double phiStar) const;
+  double KaonPole(double s, double W, double theta, double thetaStar, double phiStar) const;
+
+private:
+  double matrixElement(double s, double W, double theta, double thetaStar, double phiStar) const override;
+ 
+};
+
+class SingleKaonPP : public SKChannels {
 public:
   // prevent copying
   SingleKaonPP(const SingleKaonPP&) = delete;
   SingleKaonPP& operator=(const SingleKaonPP&) = delete;
   SingleKaonPP(SingleKaonPP&&) noexcept = default;
   SingleKaonPP& operator=(SingleKaonPP&&) noexcept = default;
-  SingleKaonPP(double m3_, double EbeamMin_, double EbeamMax_) : SingleKaonPhaseSpace{ Channel::pp, m3_, EbeamMin_, EbeamMax_ } {}
+  SingleKaonPP(params& p) : SKChannels{ p, Channel::pp } {}
   ~SingleKaonPP() { }
 
-  static SingleKaonPP& construct(double m3_, double EbeamMin_, double EbeamMax_) {
-    static SingleKaonPP instance{ m3_, EbeamMin_, EbeamMax_ };
+  static SingleKaonPP& construct(params& p) {
+    static SingleKaonPP instance{ p };
     return instance;
   }
 
   static SingleKaonPP& get() {
-    return construct(0.0, 0.0, 0.0);
+    return construct(pnull());
   }
-  
+
+private:
+	static params& pnull() {
+		static params dummy;
+		return dummy;
+	}
 };
 
-class SingleKaonNP : public SingleKaonPhaseSpace {
-
+class SingleKaonNP : public SKChannels {
 public:
   // prevent copying
   SingleKaonNP(const SingleKaonNP&) = delete;
   SingleKaonNP& operator=(const SingleKaonNP&) = delete;
   SingleKaonNP(SingleKaonNP&&) noexcept = default;
   SingleKaonNP& operator=(SingleKaonNP&&) noexcept = default;
-  SingleKaonNP(double m3_, double EbeamMin_, double EbeamMax_) : SingleKaonPhaseSpace{ Channel::np, m3_, EbeamMin_, EbeamMax_ } {}
+  SingleKaonNP(params& p) : SKChannels{ p, Channel::np } {}
   ~SingleKaonNP() { }
 
-  static SingleKaonNP& construct(double m3_, double EbeamMin_, double EbeamMax_) {
-    static SingleKaonNP instance{ m3_, EbeamMin_, EbeamMax_ };
+  static SingleKaonNP& construct(params& p) {
+    static SingleKaonNP instance{ p };
     return instance;
   }
 
   static SingleKaonNP& get() {
-    return construct(0.0, 0.0, 0.0);
+    return construct(pnull());
   }
-  
+
+private:
+	static params& pnull() {
+		static params dummy;
+		return dummy;
+	}
 };
 
-class SingleKaonNN : public SingleKaonPhaseSpace {
-
+class SingleKaonNN : public SKChannels {
 public:
   // prevent copying
   SingleKaonNN(const SingleKaonNN&) = delete;
   SingleKaonNN& operator=(const SingleKaonNN&) = delete;
   SingleKaonNN(SingleKaonNN&&) noexcept = default;
   SingleKaonNN& operator=(SingleKaonNN&&) noexcept = default;
-  SingleKaonNN(double m3_, double EbeamMin_, double EbeamMax_) : SingleKaonPhaseSpace{ Channel::nn, m3_, EbeamMin_, EbeamMax_ } {}
+  SingleKaonNN(params& p) : SKChannels{ p, Channel::nn } {}
   ~SingleKaonNN() { }
 
-  static SingleKaonNN& construct(double m3_, double EbeamMin_, double EbeamMax_) {
-    static SingleKaonNN instance{ m3_, EbeamMin_, EbeamMax_ };
+  static SingleKaonNN& construct(params& p) {
+    static SingleKaonNN instance{ p };
     return instance;
   }
 
   static SingleKaonNN& get() {
-    return construct(0.0, 0.0, 0.0);
+    return construct(pnull());
   }
-  
+
+private:
+	static params& pnull() {
+		static params dummy;
+		return dummy;
+	}
 };
+
+class SingleKaonAntiPP : public SKAntiChannels {
+public:
+  // prevent copying
+  SingleKaonAntiPP(const SingleKaonAntiPP&) = delete;
+  SingleKaonAntiPP& operator=(const SingleKaonAntiPP&) = delete;
+  SingleKaonAntiPP(SingleKaonAntiPP&&) noexcept = default;
+  SingleKaonAntiPP& operator=(SingleKaonAntiPP&&) noexcept = default;
+  SingleKaonAntiPP(params& p) : SKAntiChannels{ p, Channel::pp } {}
+  ~SingleKaonAntiPP() { }
+
+  static SingleKaonAntiPP& construct(params& p) {
+    static SingleKaonAntiPP instance{ p };
+    return instance;
+  }
+
+  static SingleKaonAntiPP& get() {
+    return construct(pnull());
+  }
+
+private:
+	static params& pnull() {
+		static params dummy;
+		return dummy;
+	}
+};
+
+class SingleKaonAntiPN : public SKAntiChannels {
+public:
+  // prevent copying
+  SingleKaonAntiPN(const SingleKaonAntiPN&) = delete;
+  SingleKaonAntiPN& operator=(const SingleKaonAntiPN&) = delete;
+  SingleKaonAntiPN(SingleKaonAntiPN&&) noexcept = default;
+  SingleKaonAntiPN& operator=(SingleKaonAntiPN&&) noexcept = default;
+  SingleKaonAntiPN(params& p) : SKAntiChannels{ p, Channel::pn } {}
+  ~SingleKaonAntiPN() { }
+
+  static SingleKaonAntiPN& construct(params& p) {
+    static SingleKaonAntiPN instance{ p };
+    return instance;
+  }
+
+  static SingleKaonAntiPN& get() {
+    return construct(pnull());
+  }
+
+private:
+	static params& pnull() {
+		static params dummy;
+		return dummy;
+	}
+};
+
+class SingleKaonAntiNN : public SKAntiChannels {
+public:
+  // prevent copying
+  SingleKaonAntiNN(const SingleKaonAntiNN&) = delete;
+  SingleKaonAntiNN& operator=(const SingleKaonAntiNN&) = delete;
+  SingleKaonAntiNN(SingleKaonAntiNN&&) noexcept = default;
+  SingleKaonAntiNN& operator=(SingleKaonAntiNN&&) noexcept = default;
+  SingleKaonAntiNN(params& p) : SKAntiChannels{ p, Channel::nn } {}
+  ~SingleKaonAntiNN() { }
+
+  static SingleKaonAntiNN& construct(params& p) {
+    static SingleKaonAntiNN instance{ p };
+    return instance;
+  }
+
+  static SingleKaonAntiNN& get() {
+    return construct(pnull());
+  }
+
+private:
+	static params& pnull() {
+		static params dummy;
+		return dummy;
+	}
+};
+
+// Build all channels
+void SingleKaonConstruct(params& p);
 
 }
 }

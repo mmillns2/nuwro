@@ -111,6 +111,31 @@ PARAM(double,hyp_axial_mass,1030)\
 PARAM(bool,hyp_effmass,true)\
 PARAM(double,hyp_Lambda_Eb,27)\
 PARAM(double,hyp_Sigma_Eb,-70)\
+PARAM(bool, kaon_Kplus, 1)\
+PARAM(bool, kaon_Kminus, 1)\
+PARAM(bool, kaon_Kzero, 1)\
+PARAM(bool, kaon_KzeroBar, 1)\
+PARAM(bool, kaon_CT, 1)\
+PARAM(bool, kaon_CRSigma, 1)\
+PARAM(bool, kaon_CRLambda, 1)\
+PARAM(bool, kaon_KaonPole, 1)\
+PARAM(bool, kaon_PionInFlight, 1)\
+PARAM(bool, kaon_EtaInFlight, 1)\
+PARAM(bool, kaon_CT_anti, 1)\
+PARAM(bool, kaon_Sigma_anti, 1)\
+PARAM(bool, kaon_SigmaStar_anti, 1)\
+PARAM(bool, kaon_Lambda_anti, 1)\
+PARAM(bool, kaon_KaonPole_anti, 1)\
+PARAM(bool, kaon_PionInFlight_anti, 1)\
+PARAM(bool, kaon_EtaInFlight_anti, 1)\
+PARAM(bool, kaon_dipoleff, 1)\
+PARAM(double, kaon_MF, 1000)\
+PARAM(bool, kaon_fullBeam, 1)\
+PARAM(int, kaon_beam_bins, 10)\
+PARAM(int, kaon_W_bins, 10)\
+PARAM(int, kaon_theta_bins, 10)\
+PARAM(int, kaon_thetaStar_bins, 10)\
+PARAM(int, kaon_phiStar_bins, 10)\
 PARAM(bool,kaskada_on,1)\
 PARAM(double,kaskada_w,7)\
 PARAM(bool,kaskada_redo,0)\

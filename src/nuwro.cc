@@ -156,22 +156,7 @@ void NuWro::init (int argc, char **argv)
 	}
 	if(p.beam_test_only == 0 && p.kaskada_redo == 0 && p.dyn_kaon)
 	{
-		int nu_pdg{ p.beam_particle };
-		int lepton_pdg{ nu_pdg - (nu_pdg > 0 ? 1 : -1) };
-		double m3{ PDG::mass(lepton_pdg) };
-
-		std::stringstream ss(p.beam_energy);
-		std::vector<double> Ebeams;
-		double value;
-		while(ss >> value) Ebeams.push_back(value);
-		double EbeamMin{ Ebeams[0] };
-		double EbeamMax{ Ebeams.size() == 1 ? Ebeams[0] : Ebeams[1] };
-
-		//double Ebeam{ std::stod(p.beam_energy) }; 							
-
-		phase23::singlek::SingleKaonPP::construct(m3, EbeamMin, EbeamMax);	
-		phase23::singlek::SingleKaonNP::construct(m3, EbeamMin, EbeamMax);	
-		phase23::singlek::SingleKaonNN::construct(m3, EbeamMin, EbeamMax);	
+		phase23::singlek::SingleKaonConstruct(p);
 	}
 	if(p.kaskada_redo==0)
 	{

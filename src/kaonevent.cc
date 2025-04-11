@@ -39,12 +39,12 @@ double kaonevent(params& p, event& e, nucleus& t)
   e.weight = 0;
 
 	// disable for anti neutrinos for now
-	if(e.in[0].pdg < 0) return 0;
+	//if(e.in[0].pdg < 0) return 0;
 
   // particles
-  particle nu = e.in[0];  // initial antineutrino
+  particle nu = e.in[0];  // initial neutrino
   particle N0 = e.in[1];  // initial nucleon
-  particle lepton;        // outgoing antilepton
+  particle lepton;        // outgoing lepton
   particle kaon;          // created kaon
   particle N1;            // outgoing nucleon
 
@@ -91,27 +91,56 @@ double kaonevent(params& p, event& e, nucleus& t)
 	vect q2_v{ };	// kaon
 	vect q3_v{ };	// lepton
 
-	double xsec{  };
+	double xsec{ 0 };
 
-	// assume first a proton is produced
-	N1.pdg = 2212;
-	N1.set_mass(PDG::mass(N1.pdg));
+	if(e.in[0].pdg > 0) {	// non-anti
+		// assume first a proton is produced
+		N1.pdg = PDG::pdg_proton;
+		N1.set_mass(PDG::mass(N1.pdg));
 
-	switch(N0.pdg) {
-		case PDG::pdg_proton:		// proton -> proton
-			kaon.pdg = 321;
-			xsec = phase23::singlek::SingleKaonPP::get().xsec(E_beam, p1_v, q1_v, q2_v, q3_v);
-			break;
+		switch(N0.pdg) {
+			case PDG::pdg_proton:		// proton -> proton + K+
+				kaon.pdg = 321;
+				if(p.kaon_Kplus)
+					xsec = phase23::singlek::SingleKaonPP::get().xsec(E_beam, p1_v, q1_v, q2_v, q3_v);
+				break;
 
-		case PDG::pdg_neutron:	// neutron -> proton
-			kaon.pdg = 311;
-			xsec = phase23::singlek::SingleKaonNP::get().xsec(E_beam, p1_v, q1_v, q2_v, q3_v);
-			break;
+			case PDG::pdg_neutron:	// neutron -> proton + K0
+				kaon.pdg = 311;
+				if(p.kaon_Kzero)
+					xsec = phase23::singlek::SingleKaonNP::get().xsec(E_beam, p1_v, q1_v, q2_v, q3_v);
+				break;
 
-		default:
-			return 0;
+			default:
+				return 0;
+		}
 	}
 	
+	else if(e.in[0].pdg < 0) {	// anti
+		// assume first a neutron is produced
+		N1.pdg = PDG::pdg_neutron;
+		N1.set_mass(PDG::mass(N1.pdg));
+
+		switch(N0.pdg) {
+			case PDG::pdg_proton:		// proton -> neutron + K0bar
+				kaon.pdg = -311;
+				if(p.kaon_KzeroBar)
+					xsec = phase23::singlek::SingleKaonAntiPN::get().xsec(E_beam, p1_v, q1_v, q2_v, q3_v);
+				break;
+
+			case PDG::pdg_neutron:	// neutron -> neutron + K-
+				kaon.pdg = -321;
+				if(p.kaon_Kminus)
+					xsec = phase23::singlek::SingleKaonAntiNN::get().xsec(E_beam, p1_v, q1_v, q2_v, q3_v);
+				break;
+
+			default:
+				return 0;
+		}
+	}
+
+	else { return 0; }
+
 	kaon.set_mass(PDG::mass(kaon.pdg));
 
  	// update particle 4-momentum
@@ -119,9 +148,23 @@ double kaonevent(params& p, event& e, nucleus& t)
 	kaon.p4() = q2_v;
 	lepton.p4() = q3_v;
 
-	if(N0.pdg == PDG::pdg_neutron) {	// neutron -> neutron
+	if(N0.pdg == PDG::pdg_neutron && e.in[0].pdg > 0 && p.kaon_Kplus) {	// neutron -> neutron + K+ (non-anti)
 
 		double xsec2{ phase23::singlek::SingleKaonNN::get().xsec(E_beam, p1_v, q1_v, q2_v, q3_v) };
+		
+		if(frandom() < xsec2/(xsec + xsec2)) {
+			N1.p4() = q1_v;
+			kaon.p4() = q2_v;
+			lepton.p4() = q3_v;
+		}
+
+		// cross sections sum up
+		xsec += xsec2;
+	}
+
+	if(N0.pdg == PDG::pdg_proton && e.in[0].pdg < 0 && p.kaon_Kminus) {	// proton -> proton + K- (anti)
+
+		double xsec2{ phase23::singlek::SingleKaonAntiPP::get().xsec(E_beam, p1_v, q1_v, q2_v, q3_v) };
 		
 		if(frandom() < xsec2/(xsec + xsec2)) {
 			N1.p4() = q1_v;
@@ -143,8 +186,6 @@ double kaonevent(params& p, event& e, nucleus& t)
   e.weight = xsec / cm2;
 
   return e.weight * cm2;
-
-//	return 0;
 }
 
 double kaonevent2(params& p, event& e, nucleus& t)
