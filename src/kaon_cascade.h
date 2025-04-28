@@ -8,6 +8,7 @@
 enum kaon_state { Kplus, Kminus, Kzero, Kzerobar };
 
 double get_xsec(TGraph* g, double p);
+double get_xsec_0(TGraph* g, double p);
 
 void kaon_exp_xsec(double E, double Plab, double sigma[], kaon_state state);
 

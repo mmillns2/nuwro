@@ -263,6 +263,7 @@ void Interaction::total_cross_sections(particle &p1, nucleus &t, interaction_par
       get_hyp_xsec(X.xsec_n,X.xsec_p,X.p2,p1,X.sigma,X.hyp_state);
       break;
 
+		// Kaon interactions
 		case 321:
 		case -321:
 			// new method added below to house nucleon/kaon scattering cross section
