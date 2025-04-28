@@ -1,6 +1,7 @@
 #include "Interaction.h"
 #include "pidata.h"
 #include "hyperon_cascade.h"
+#include "kaon_cascade.h"
 
 
 ///////////////////////////////////////////////////////////
@@ -262,6 +263,15 @@ void Interaction::total_cross_sections(particle &p1, nucleus &t, interaction_par
       get_hyp_xsec(X.xsec_n,X.xsec_p,X.p2,p1,X.sigma,X.hyp_state);
       break;
 
+		case 321:
+		case -321:
+			// new method added below to house nucleon/kaon scattering cross section
+      // a new parameter was added to Interaction.h to store the pdg code of the kaon
+			//std::cout << "Calculating kaon cross section\n";
+      get_kaon_xsec(X.xsec_n,X.xsec_p,X.p2,p1,X.kaon_xsecs,X.k_state);
+			//std::cout << "Calculated kaon cross section\n";
+      break;
+
     default: // rest is pions!
     { 
       PD.set_density(X.dens);
@@ -329,6 +339,14 @@ bool Interaction::particle_scattering (particle & p1, nucleus &t, interaction_pa
     case pdg_SigmaP:
       k1 = hyperon_;
       return hyperon_scattering(X.hyp_state,p1,X.p2,t,X.n,X.p,X.sigma,X.xsec_p,X.xsec_n);
+
+		// Kaon process
+		case 321:
+		case -321:
+			k1 = kaon_;
+			//std::cout << "Scattering kaon\n";
+			return kaon_scattering(X.k_state,p1,X.p2,t,X.n,X.p,X.kaon_xsecs,X.xsec_p,X.xsec_n);
+			//std::cout << "Scattered kaon\n";
 
     default:
       return 0;
@@ -437,6 +455,40 @@ void Interaction::get_hyp_xsec(double &nY, double &pY,particle N,particle Y,doub
 
   pY = (sigma[0] + sigma[1] + sigma[2]); // total cross section for hyperon + proton
   nY = (sigma[3] + sigma[4] + sigma[5]); // total cross section for hyperon + neutron
+}
+
+// kaon interactions
+void Interaction::get_kaon_xsec(double& nY, double& pY, particle N, particle Y, double xsecs[], kaon_state& state)
+{
+  switch(Y.pdg){
+  case PDG::pdg_K:
+    state = Kplus;
+    break;
+  case -PDG::pdg_K:
+    state = Kminus;
+    break;
+  }
+
+  // Calculate momenta of kaon in nucleon rest frame
+  vec v = vect(N).v();
+
+  // boost to nucleon rest frame
+  N.boost(-v);
+  Y.boost(-v);
+
+  double Plab = sqrt(Y.x*Y.x + Y.y*Y.y + Y.z*Y.z);
+
+  v = (vect(N) + vect(Y)).v();
+
+  // CMS energy
+  // Required to check which final states are accessible
+
+  double E = sqrt((N+Y)*(N+Y));
+
+  kaon_exp_xsec(E, Plab, xsecs, state);
+
+  pY = xsecs[0]; // total cross section for kaon + proton
+  nY = xsecs[1]; // total cross section for kaon + neutron
 }
 
 ////////////////////////////////////////
@@ -687,6 +739,33 @@ bool Interaction::hyperon_scattering(int hyp_state, particle& p1, particle& p2,n
 
   return  res;
 }
+
+
+// kaon interactions
+bool Interaction::kaon_scattering(kaon_state state, particle& p1, particle& p2, nucleus t, int& n,
+                                     particle p[], double xsecs[], double sigma_p, double sigma_n)
+{
+  int res;
+
+  // Select final state
+  get_kaon_state(state, xsecs, ij, p);
+
+  // Set the process ID
+
+  // (quasi)elastic scatter - always this for now
+  k2 = 0;
+
+	// always isotropic scatter for now
+	res = scatter_n(n,p1,p2,p) || hyperon_error(p1,p2,p);
+
+  // Set position of outgoing particles to match 
+  // final position of hyperon before scatter
+  p[0].r = p1.r;
+  p[1].r = p1.r;
+
+  return  res;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////
 // If scatter unable to generate kinematics set initial state same as final

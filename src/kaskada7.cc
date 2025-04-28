@@ -69,8 +69,15 @@ int kaskada::kaskadaevent()
     parts.pop();                                // remove this particle from a temp vector
     p = &p1;
 
+		if(nucleon(p1.pdg)) continue;
+
+		//std::cout << "Popped particle: " << *p << '\n';
+
+		//std::cout << "Preparing interaction...\n";
     X = prepare_interaction();                  // set the density and the total cross section
                                                 // calculate free path
+
+		//std::cout << "Prepared interaction.\n";
 
     if (!move_particle()) continue;             // propagate particle, returns false if jailed
 
@@ -83,6 +90,7 @@ int kaskada::kaskadaevent()
       if (nucleon (p1.pdg)) e->nod[13]++;
       if (pion (p1.pdg)) e->nod[12]++;
       if (hyperon (p1.pdg)) e->nod[14]++;
+			//if (std::abs(p1.pdg) == PDG::pdg_KP) e->nod[15]++;
       parts.push (*p);                          // interaction did not happend, 
                                                 // p should be further propagated 
     }
@@ -145,6 +153,11 @@ void kaskada::prepare_particles()
 
       parts.push(p1); // add particle to queue
     }
+		else if(std::abs(p1.pdg) == 321) // if a kaon
+		{
+			//std::cout << "Pushed kaon to queue\n";
+			parts.push(p1); // add particle to queue
+		}
     else              // if not a nucleon, pion nor hyperon
     {
       p1.endproc=escape;
@@ -178,7 +191,9 @@ interaction_parameters kaskada::prepare_interaction()
   res.dens_p = res.dens * nucl->frac_proton ();
   res.n = 2;
 
+	//std::cout << "Calculating total cross sections\n";
   I->total_cross_sections (*p, *nucl, res); // calculate cross sections xsec_p and xsec_n
+	//std::cout << "Calculated total cross sections\n";
 
   corr_func->set_input_point( p->travelled );
   double corr_ii = corr_func->get_value( 1 );
@@ -223,7 +238,7 @@ bool kaskada::move_particle()
 {
   p->krok (min (max_step, X.freepath));   // propagate by no more than max_step
 
-  if (!(p->nucleon() || hyperon(p->pdg))) // pion can not be jailed
+  if (!(p->nucleon() || hyperon(p->pdg) || std::abs(p->pdg) == 321)) // pion can not be jailed
     return true;
 
   if(p->nucleon())
@@ -253,6 +268,11 @@ bool kaskada::move_particle()
     }
     return true; // hyperon was not jailed
   }
+
+	if(std::abs(p->pdg) == 321)	// kaon 
+	{
+		return true; // kaon was not jailed - always for now
+	}
 
   return true;
 }

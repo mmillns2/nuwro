@@ -176,12 +176,16 @@ double kaonevent(params& p, event& e, nucleus& t)
 		xsec += xsec2;
 	}
 
+	//std::cout << "Lepton=" << lepton << '\n';
+	//std::cout << "Kaon=" << kaon << '\n';
+	//std::cout << "Nucleon=" << N1 << '\n';
+
   e.temp.push_back(lepton);
-  e.temp.push_back(kaon);
   e.temp.push_back(N1);
+  e.temp.push_back(kaon);
   e.out.push_back(lepton);
-  e.out.push_back(kaon);
   e.out.push_back(N1);
+  e.out.push_back(kaon);
 
   e.weight = xsec / cm2;
 

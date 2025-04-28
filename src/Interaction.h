@@ -11,9 +11,13 @@
 //#define echo(x)
 #include "piangle.h"
 #include "input_data.h"
+#include "kaon_cascade.h"
 
-enum {nucleon_=10,pion_=20,hyperon_=30};
+enum {nucleon_=10,pion_=20,hyperon_=30,kaon_=40};
 enum {elastic_=0, ce_=1, spp_=2, dpp_=3, tpp_=4, abs_=5};
+
+// kaon states -> moved to kaon_cascade.h
+//enum kaon_state { Kplus, Kminus, Kzero, Kzerobar };
 
 ////////////////////////////////////////
 // interaction_parameters
@@ -43,6 +47,10 @@ struct interaction_parameters
   // C Thorpe added Jan 2019 hyperon interactions
   double sigma[6]; // 6 cross sections used in 2 particle hyperon scattering
   int hyp_state;   // initial hyperon state
+
+	// kaon interactions
+	double kaon_xsecs[2];
+	kaon_state k_state;
 };
 
 ////////////////////////////////////////
@@ -763,6 +771,12 @@ class Interaction
     bool hyperon_scattering(int hyp_state, particle& p1, particle& p2,nucleus t, int &n, particle p[],
                            double sigma[], double sigma_p, double sigma_n);
     bool hyperon_error(particle p1, particle p2, particle p[]);
+
+		// kaon interactions
+		void get_kaon_xsec(double &nY, double &pY, particle N, particle Y, double xsecs[], kaon_state& state);
+    //scatters kaons, particles p1 and p2 into p[]
+    bool kaon_scattering(kaon_state state, particle& p1, particle& p2,nucleus t, int& n, particle p[],
+                           double xsecs[], double sigma_p, double sigma_n);
 };
 
 ////////////////////////////////////////
