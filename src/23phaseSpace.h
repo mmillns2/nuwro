@@ -122,10 +122,10 @@ protected:
   std::vector<double> beam;
   bool fullBeam{ false };
 
-  double ma;
-  double m1;
-  double m2;
-  double m3;
+  double ma = 939.565;
+  double m1 = 939.565;
+  double m2 = 497.648;
+  double m3 = 105.658;
 
   bool m_dipoleff;
   double m_MF;

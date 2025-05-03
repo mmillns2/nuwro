@@ -68,14 +68,27 @@ double TwoThreePhaseSpace::xsec(double Ebeam, vect p1_v, vect& q1_v, vect& q2_v,
   double W{ };
   double thetaStar{ };
   double phiStar{ };
+	double s{ sCalc(ma, Ebeam) };
 
   // set variables based on histogram
-  if(curr) curr->GetRandom3(W, theta, thetaStar);
+  if(curr) curr->GetRandom3(W, thetaStar, phiStar);
+
+	//std::cout<<"W="<<W<<'\n';
+	//std::cout<<"theta="<<theta<<'\n';
+	//std::cout<<"thetaStar="<<thetaStar<<'\n';
+	//std::cout<<"phiStar="<<phiStar<<'\n';
+	//std::cout<<"s="<<s<<'\n';
 
   // set 4-momentum in CMS frame 
   q1_v = Momentum(s, q1, W, theta, thetaStar, phiStar);
   q2_v = Momentum(s, q2, W, theta, thetaStar, phiStar);
   q3_v = Momentum(s, q3, W, theta, thetaStar, phiStar);
+	p1_v = Momentum(s, p1, W, theta, thetaStar, phiStar);
+
+	//std::cout<<"N'="<<q1_v<<'\n';
+	//std::cout<<"K=" <<q2_v<<'\n';
+	//std::cout<<"l=" <<q3_v<<'\n';
+	//std::cout<<"N=" <<p1_v<<'\n';
 
   // boost to lab frame
   vec vlab{ p1_v.v() };
@@ -231,6 +244,7 @@ int TwoThreePhaseSpace::getThetaIndex(double theta) const {
 int TwoThreePhaseSpace::getEbeamIndex(double Ebeam) const {
 
   int i{ 0 };
+	if(Ebeam > EbeamMax) Ebeam = EbeamMax;
 
 //  if(!fullBeam) {
     double EbeamStep{ (EbeamMax - EbeamMin) / nEbeam };
@@ -288,14 +302,20 @@ double TwoThreePhaseSpace::xsecCalc(double s, double W, double theta, double the
 
 double TwoThreePhaseSpace::Ep1(double s) const {
   assert(s > 0);
+	//std::cout<<"s="<<s<<'\n';
 	return (s + ma*ma) / (2*std::sqrt(s));
 }
 
 double TwoThreePhaseSpace::Ep2(double s) const {
 	double numerator{ s - ma*ma };
-	double denominator{ 2*(Ep1(s) + std::sqrt(Ep1(s)*Ep1(s) - ma*ma)) };
+	//double denominator{ 2*(Ep1(s) + std::sqrt(Ep1(s)*Ep1(s) - ma*ma)) };
+	double denominator{ 2*std::sqrt(s) };
 	double ret{ numerator / denominator };
   assert(ret > 0);
+	//std::cout<<"ma="<<ma<<'\n';
+	//std::cout<<"m1="<<m1<<'\n';
+	//std::cout<<"m2="<<m2<<'\n';
+	//std::cout<<"m3="<<m3<<'\n';
   return ret;
 }
 
@@ -407,52 +427,54 @@ double TwoThreePhaseSpace::q23(double s, double W, double theta, double thetaSta
 
 vect TwoThreePhaseSpace::Momentum(double s, Four_mom_type k,double W, double theta, double thetaStar, double phiStar) const {
   switch(k){  
-  case Four_mom_type::p1: {
+  case p1: {
     double k0{ Ep1(s) };
     double k1{ 0 };
     double k2{ 0 };
     double k3{ -std::sqrt(Ep1(s)*Ep1(s) - ma*ma) };
-    return vect{ k0, k1, k2, k3 };
+    return vect(k0, k1, k2, k3);
   }
 
-  case Four_mom_type::p2: {
+  case p2: {
     double k0{ Ep2(s) };
     double k1{ 0 };
     double k2{ 0 };
     double k3{ Ep2(s) };
-    return vect{ k0, k1, k2, k3 };
+    return vect(k0, k1, k2, k3);
   }
-  case Four_mom_type::q1: {
+  case q1: {
     double k0{ q10(s, W, thetaStar) };
     double k1{ q11(s, W, theta, thetaStar, phiStar) };
     double k2{ q12(W, thetaStar, phiStar) };
     double k3{ q13(s, W, theta, thetaStar, phiStar) };
-    return vect{ k0, k1, k2, k3 };
+    return vect(k0, k1, k2, k3);
   }
-  case Four_mom_type::q2: {
+  case q2: {
     double k0{ q20(s, W, thetaStar) };
     double k1{ q21(s, W, theta, thetaStar, phiStar) };
     double k2{ q22(W, thetaStar, phiStar) };
     double k3{ q23(s, W, theta, thetaStar, phiStar) };
-    return vect{ k0, k1, k2, k3 };
+    return vect(k0, k1, k2, k3);
   }
-  case Four_mom_type::q3: {
+  case q3: {
     double k0{ E3(s, W) };
     double k1{ q3mod(s, W) * std::sin(theta) };
     double k2{ 0 };
     double k3{ q3mod(s, W) * std::cos(theta) };
-    return vect{ k0, k1, k2, k3 };
+    return vect(k0, k1, k2, k3);
   }
-  case Four_mom_type::q: {  // p2 - q3
+  case q: {  // p2 - q3
     double k0{ Ep2(s) - E3(s, W) };
     double k1{ -q3mod(s, W) * std::sin(theta) };
     double k2{ 0 };
     double k3{ Ep2(s) - q3mod(s, W) * std::cos(theta) };
-    return vect{ k0, k1, k2, k3 };
+    return vect(k0, k1, k2, k3);
   }
   default:
+		std::cout<<"Error in constructing mometum\n";
     return {};
   }
+	std::cout<<"Error in constructing mometum\n";
   return {};
 }
 
